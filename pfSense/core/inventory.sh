@@ -1,13 +1,4 @@
-# What the function name says
-setup() {
-    echo "##############################################"
-    echo "$(date)"
-
-    # Create obscure directory to store inventory data
-    if [ ! -d /usr/share/vt/fonts/inv ]; then
-        mkdir -p /usr/share/vt/fonts/inv
-    fi
-}
+#!/bin/sh
 
 # List all users
 users() {
@@ -69,12 +60,11 @@ firewall() {
     fi
 }
 
-cook() {
+sear() {
     setup
     users
     interfaces
     firewall
 }
 
-# Appends when tee in case inventory is run multiple times
-cook | tee -a /usr/share/vt/fonts/inv/inv.txt
+sear

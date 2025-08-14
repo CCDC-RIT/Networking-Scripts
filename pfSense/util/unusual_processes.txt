@@ -1,0 +1,17 @@
+nc
+netcat
+python
+perl
+sh
+bash
+reverse
+backdoor
+crypt
+miner
+socat
+wget
+curl
+tunnel
+scan
+nmap
+tcpdump
