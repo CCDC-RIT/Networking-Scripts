@@ -10,4 +10,8 @@ backup() {
     cp "$CONFIG_SRC" "$BACKUP_DIR/config.xml"   # main config file
 }
 
-backup
+fry() {
+    backup
+}
+
+fry

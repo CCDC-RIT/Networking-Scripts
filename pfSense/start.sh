@@ -1,21 +1,25 @@
-#/bin/sh
+#!/bin/sh
 
 setup() {
     echo "#################################################"
-    echo "$(date)"
+    date
 
-    # Create obscure directory to store inventory data
+    # Create obscure directory to store data
     if [ ! -d /usr/share/vt/fonts/blueteam ]; then
         mkdir -p /usr/share/vt/fonts/blueteam
     fi
 }
 
 serve() {
-    cd core
+    cd core || echo "Failed to initialize" && exit
+    setup
+    # sh downloads.sh
     sh inventory.sh
     sh backup.sh
+    sh users.sh
     sh audit.sh
     # sh secure.sh
+    # sh firewall.sh
     # sh logging.sh
 }
 

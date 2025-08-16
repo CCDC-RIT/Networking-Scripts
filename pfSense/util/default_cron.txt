@@ -1,0 +1,10 @@
+/usr/sbin/newsyslog
+/etc/rc.periodic daily
+/etc/rc.periodic weekly
+/etc/rc.periodic monthly
+/usr/bin/nice -n20 adjkerntz -a
+/usr/bin/nice -n20 /etc/rc.update_bogons.sh
+/usr/bin/nice -n20 /etc/rc.dyndns.update
+/usr/bin/nice -n20 /usr/local/sbin/expiretable -v -t 3600 virusprot
+/usr/bin/nice -n20 /etc/rc.update_urltables
+/usr/bin/nice -n20 /etc/rc.update_pkg_metadata

@@ -1,10 +1,21 @@
 #!/bin/sh
 
 UNUSUAL_PROCESSES=$(paste -sd'|' ../util/unusual_processes.txt)
+DEFAULT_CRON=$(cat ../util/default_cron.txt)
+DEFAULT_SERVICES=$(cat ../util/default_services.txt)
 
 processes() {
-    echo "\nSuspicious processes found:"
+    echo "Suspicious processes found:"
     ps aux | awk -v names="$UNUSUAL_PROCESSES" '($1 != "root") || ($11 ~ /\/tmp\//) || ($11 ~ names) {print}'
+}
+
+services() {
+    echo "Non-default services found:"
+    service -e | while read -r svc; do
+        if ! echo "$DEFAULT_SERVICES" | grep -Fxq "$svc"; then
+            echo "$svc"
+        fi
+    done
 }
 
 # Check users that are currently logged on
@@ -21,8 +32,15 @@ terminals() {
 
 # Check cron jobs for each user
 cron() {
-    for user in $(cut -f1 -d: /etc/passwd); do
-        crontab -l -u "$user" 2>/dev/null | grep -v '^#' | grep -v '^$' && echo "User: $user"
+    cut -f1 -d: /etc/passwd | while read -r user; do
+        crontab -l -u "$user" 2>/dev/null | grep -v '^#' | grep -v '^$' | while IFS= read -r job; do
+            job_clean=$(echo "$job" | xargs)
+            if [ -n "$job_clean" ]; then
+                if ! echo "$DEFAULT_CRON" | grep -Fxq "$job_clean"; then
+                    echo "Non-default cron job for $user: $job_clean"
+                fi
+            fi
+        done
     done
 }
 
@@ -33,6 +51,7 @@ system() {
 
 saute() {
     processes
+    services
     terminals
     cron
     system
