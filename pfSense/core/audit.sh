@@ -28,6 +28,30 @@ services() {
     done
 }
 
+auth_events() {
+    echo "Recent authentication events"
+
+    echo "--SSH--"
+    grep "sshd" /var/log/auth.log 2>/dev/null | tail -20 || echo "No SSH events in auth.log"
+    
+    # Web GUI login attempts
+    echo "--Web GUI--"
+    grep -E "(login|authentication)" /var/log/system.log 2>/dev/null | tail -10 || echo "No GUI auth events found"
+}
+
+misc_log() {
+    echo "--DHCP--"
+    if [ -f "/var/log/dhcpd.log" ]; then
+        tail -20 /var/log/dhcpd.log
+    fi
+
+    echo "--DNS--"
+    if [ -f "/var/log/resolver.log" ]; then
+        echo "Recent DNS resolver events:"
+        tail -20 /var/log/resolver.log
+    fi
+}
+
 # Check users that are currently logged on
 terminals() {
     echo "Active terminals:"
