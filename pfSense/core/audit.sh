@@ -39,7 +39,7 @@ auth_events() {
     grep -E "(login|authentication)" /var/log/system.log 2>/dev/null | tail -10 || echo "No GUI auth events found"
 }
 
-misc_log() {
+system() {
     echo "--DHCP--"
     if [ -f "/var/log/dhcpd.log" ]; then
         tail -20 /var/log/dhcpd.log
@@ -50,6 +50,17 @@ misc_log() {
         echo "Recent DNS resolver events:"
         tail -20 /var/log/resolver.log
     fi
+
+    if [ -f "/cf/conf/config.xml" ]; then
+        echo "Config file last edited: "
+        ls -la /cf/conf/config.xml
+        echo ""
+    fi
+    
+    
+    echo "Recent configuration changes:"
+    grep -E "(config|configuration)" /var/log/system.log 2>/dev/null | tail -10 || echo "No configuration change events found"
+    echo ""
 }
 
 # Check users that are currently logged on
@@ -89,6 +100,7 @@ saute() {
     processes
     services
     terminals
+    system
     cron
     system
 }
