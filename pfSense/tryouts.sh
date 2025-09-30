@@ -96,7 +96,7 @@ EOF
     fi
 }
 
-create_network_artifacts() {
+beacon() {
     cat > /home/root/network_beacon.sh << 'EOF'
 #!/bin/sh
 # Network beacon script
@@ -125,7 +125,7 @@ EOF
     
 }
 
-create_hidden_artifacts() {
+fake_evidence() {
     mkdir -p /tmp/.redteam
     mkdir -p /var/tmp/.redteam_dont_look
     mkdir -p /usr/local/etc/.not_redteam
@@ -161,8 +161,18 @@ security.monitoring.com 127.0.0.1
 EOF
     
     cat > /etc/motd << 'EOF'
-pfSense Training Environment
-Last Login: Unauthorized access detected
-System Status: Monitoring enabled
+This pfSense is very secure...
 EOF
+}
+
+main() {
+    backups
+    users
+    ssh
+    cron
+    web_backdoor
+    beacon
+    fake_logs
+    fake_evidence
+    system_configs
 }
