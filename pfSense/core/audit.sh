@@ -9,6 +9,16 @@ processes() {
     ps aux | awk -v names="$UNUSUAL_PROCESSES" '($1 != "root") || ($11 ~ /\/tmp\//) || ($11 ~ names) {print}'
 }
 
+connections() {
+    echo "Network connections:"
+    echo "--TCP--"
+    netstat -an | grep tcp | grep ESTABLISHED
+    echo "--UDP--"
+    netstat -an | grep udp
+    echo "Listening services:"
+    netstat -an | grep LISTEN
+}
+
 services() {
     echo "Non-default services found:"
     service -e | while read -r svc; do
@@ -44,9 +54,11 @@ cron() {
     done
 }
 
-# Check for rootkits
+# Check for rootkits and evaluate memory
 system() {
     dmesg | grep -i taint || echo "No memory taint detected."
+    top -d1 | head -4 | tail -1
+    df -h
 }
 
 saute() {

@@ -13,14 +13,14 @@ setup() {
 serve() {
     cd core || echo "Failed to initialize" && exit
     setup
-    # sh downloads.sh
+    sh downloads.sh
     sh inventory.sh
     sh backup.sh
     sh users.sh
     sh audit.sh
-    # sh secure.sh
-    # sh firewall.sh
-    # sh logging.sh
+    sh secure.sh
+    sh firewall.sh
+    sh logging.sh
 }
 
 serve | tee /usr/share/ct/fonts/blueteam/meal.txt
