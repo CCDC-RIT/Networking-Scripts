@@ -96,7 +96,7 @@ system() {
     df -h
 }
 
-saute() {
+audit() {
     processes
     services
     terminals
@@ -105,4 +105,4 @@ saute() {
     system
 }
 
-saute
+audit
