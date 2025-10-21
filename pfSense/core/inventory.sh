@@ -23,6 +23,14 @@ users() {
     done < /etc/passwd
 }
 
+services() {
+    echo "Non-Default Services"
+    service -e > ../util/file/compare_services.txt
+    cd ../util || echo "util directory is missing"
+    diff --suppress-common-lines files/compare_services.txt info/default_services.txt
+    cd ../core || echo "core direcotry is missing"
+}
+
 # List zones
 interfaces() {
     echo "Network interfaces:"
@@ -60,11 +68,12 @@ firewall() {
     fi
 }
 
-sear() {
+inventory() {
     setup
     users
+    services
     interfaces
     firewall
 }
 
-sear
+inventory
