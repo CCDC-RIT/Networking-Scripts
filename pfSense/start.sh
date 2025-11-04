@@ -5,12 +5,16 @@ setup() {
     date
 
     # Create obscure directory to store data
-    if [ ! -d /usr/share/vt/fonts/blueteam ]; then
-        mkdir -p /usr/share/vt/fonts/blueteam
-    fi
+    stty -echo
+    read -r "Backup directory: " BACKUP_DIR
+    stty echo
+    echo ""
+
+    backup "$BACKUP_DIR"
+    unset "$BACKUP_DIR"
 }
 
-serve() {
+start() {
     cd core || echo "Failed to initialize" && exit
     setup
     sh downloads.sh
@@ -23,5 +27,5 @@ serve() {
     sh logging.sh
 }
 
-serve | tee /usr/share/ct/fonts/blueteam/meal.txt
+start | tee /usr/share/ct/fonts/blueteam/meal.txt
 cd ..
