@@ -2,7 +2,7 @@
 
 # List all users
 users() {
-    ADMIN_GROUP="admins"
+    ADMIN_GROUP="#####admins#####"
     ADMIN_USERS=$(grep "^$ADMIN_GROUP:" /etc/group | cut -d: -f4 | tr ',' '\n')
 
     echo "Users:"
@@ -25,7 +25,7 @@ users() {
 
 services() {
     echo "Non-Default Services"
-    service -e > ../util/file/compare_services.txt
+    service -e > ../util/files/compare_services.txt
     cd ../util || echo "util directory is missing"
     diff --suppress-common-lines files/compare_services.txt info/default_services.txt
     cd ../core || echo "core direcotry is missing"
@@ -69,7 +69,6 @@ firewall() {
 }
 
 inventory() {
-    setup
     users
     services
     interfaces

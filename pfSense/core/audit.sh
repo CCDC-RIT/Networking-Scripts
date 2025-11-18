@@ -1,8 +1,8 @@
 #!/bin/sh
 
-UNUSUAL_PROCESSES=$(paste -sd'|' ../util/unusual_processes.txt)
-DEFAULT_CRON=$(cat ../util/default_cron.txt)
-DEFAULT_SERVICES=$(cat ../util/default_services.txt)
+UNUSUAL_PROCESSES=$(paste -sd'|' ../util/info/unusual_processes.txt)
+DEFAULT_CRON=$(cat ../util/info/default_cron.txt)
+DEFAULT_SERVICES=$(cat ../util/info/default_services.txt)
 
 processes() {
     echo "Suspicious processes found:"

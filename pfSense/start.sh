@@ -10,7 +10,9 @@ setup() {
     stty echo
     echo ""
 
-    backup "$BACKUP_DIR"
+    [ -d "$BACKUP_DIR" ] || mkdir -p "$BACKUP_DIR"
+
+    sh backup.sh "$BACKUP_DIR"
     unset "$BACKUP_DIR"
 }
 
@@ -19,7 +21,6 @@ start() {
     setup
     sh downloads.sh
     sh inventory.sh
-    sh backup.sh
     sh users.sh
     sh audit.sh
     sh secure.sh
@@ -27,5 +28,4 @@ start() {
     sh logging.sh
 }
 
-start | tee /usr/share/ct/fonts/blueteam/meal.txt
-cd ..
+start

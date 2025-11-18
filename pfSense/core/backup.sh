@@ -1,11 +1,17 @@
 #!/bin/sh
 
 # Assuming that inventory is run first
-BACKUP_DIR=$1
+BACKUP_DIR="$1/$(date)"
 GUI_SRC="/usr/local/www"
 CONFIG_SRC="/conf/config.xml"
 RULES_SRC="/tmp/rules.debug"
 AUTH_SRC="/etc/inc/auth.inc"
+
+# Used for debugging
+if [ "$#" -ne 1 ]; then
+  echo "Missing argument!"
+  exit
+fi
 
 backup() {
     cp -r "$GUI_SRC" "$BACKUP_DIR/www"          # GUI PHP files
