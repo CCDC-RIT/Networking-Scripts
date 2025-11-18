@@ -102,7 +102,6 @@ audit() {
     terminals
     system
     cron
-    system
 }
 
 audit
