@@ -17,10 +17,10 @@ backup() {
     BACKUP_DIR="$BACKUP_DIR/$(date)"
     mkdir "$BACKUP_DIR"
     
-    cp -r --parents "$GUI_SRC" "$BACKUP_DIR/www"          # GUI PHP files
-    cp --parents "$CONFIG_SRC" "$BACKUP_DIR/config.xml"   # Main config file
-    cp --parents "$RULES_SRC" "$BACKUP_DIR/rules.debug"   # Debug rules file
-    cp --parents "$AUTH_SRC" "$BACKUP_DIR/auth.inc"       # Login check file
+    cp -r "$GUI_SRC" "$BACKUP_DIR/www"          # GUI PHP files
+    cp "$CONFIG_SRC" "$BACKUP_DIR/config.xml"   # Main config file
+    cp "$RULES_SRC" "$BACKUP_DIR/rules.debug"   # Debug rules file
+    cp "$AUTH_SRC" "$BACKUP_DIR/auth.inc"       # Login check file
 }
 
 backup
