@@ -17,9 +17,8 @@ setup() {
 }
 
 start() {
-    cd core || echo "Failed to initialize" && exit
+    cd core
     setup
-    sh downloads.sh
     sh inventory.sh
     sh users.sh
     sh audit.sh
