@@ -111,24 +111,20 @@ kernel() {
 }
 
 file_perms() {
-    echo "--SUID/SGID files (top results)--"
+    echo "--SUID/SGID files--"
     find / -xdev -type f \( -perm -4000 -o -perm -2000 \) -ls 2>/dev/null | head -n 50 || echo "find unavailable or no results"
 
-    echo "--World-writable files (top results)--"
+    echo "--World-writable files--"
     find / -xdev -type f -perm -002 -ls 2>/dev/null | head -n 50 || echo "find unavailable or no results"
 }
 
-selinux() {
-    echo "--SELinux Status--"
-    if command -v getenforce >/dev/null 2>&1; then
-        echo "SELinux: $(getenforce 2>/dev/null)"
-    else
-        echo "SELinux (getenforce) not present"
-    fi
-    if command -v apparmor_status >/dev/null 2>&1; then
-        apparmor_status 2>/dev/null || true
-    else
-        echo "AppArmor not present"
+packages() {
+    echo "--Packages--"
+    if command -v dpkg >/dev/null 2>&1; then
+        echo "Recently installed/removed (dpkg):"
+        if [ -f /var/log/dpkg.log ]; then
+            tail -n 20 /var/log/dpkg.log
+        fi
     fi
 }
 
@@ -139,7 +135,6 @@ audit() {
     infra
     kernel
     file_perms
-    selinux
     system
     cron
 }
