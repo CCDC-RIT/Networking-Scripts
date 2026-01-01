@@ -110,11 +110,36 @@ kernel() {
     fi
 }
 
+file_perms() {
+    echo "--SUID/SGID files (top results)--"
+    find / -xdev -type f \( -perm -4000 -o -perm -2000 \) -ls 2>/dev/null | head -n 50 || echo "find unavailable or no results"
+
+    echo "--World-writable files (top results)--"
+    find / -xdev -type f -perm -002 -ls 2>/dev/null | head -n 50 || echo "find unavailable or no results"
+}
+
+selinux() {
+    echo "--SELinux Status--"
+    if command -v getenforce >/dev/null 2>&1; then
+        echo "SELinux: $(getenforce 2>/dev/null)"
+    else
+        echo "SELinux (getenforce) not present"
+    fi
+    if command -v apparmor_status >/dev/null 2>&1; then
+        apparmor_status 2>/dev/null || true
+    else
+        echo "AppArmor not present"
+    fi
+}
+
 audit() {
     processes
     services
     terminals
     infra
+    kernel
+    file_perms
+    selinux
     system
     cron
 }
