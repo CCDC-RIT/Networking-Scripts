@@ -39,7 +39,7 @@ auth_events() {
     grep -E "(login|authentication)" /var/log/system.log 2>/dev/null | tail -10 || echo "No GUI auth events found"
 }
 
-system() {
+infra() {
     echo "--DHCP--"
     if [ -f "/var/log/dhcpd.log" ]; then
         tail -20 /var/log/dhcpd.log
@@ -56,7 +56,6 @@ system() {
         ls -la /cf/conf/config.xml
         echo ""
     fi
-    
     
     echo "Recent configuration changes:"
     grep -E "(config|configuration)" /var/log/system.log 2>/dev/null | tail -10 || echo "No configuration change events found"
@@ -89,17 +88,33 @@ cron() {
     done
 }
 
-# Check for rootkits and evaluate memory
+# Check for rootkits and evaluate memory / kernel and disk state
 system() {
     dmesg | grep -i taint || echo "No memory taint detected."
-    top -d1 | head -4 | tail -1
+    # show a brief top line if available
+    if command -v top >/dev/null 2>&1; then
+        top -b -n1 2>/dev/null | head -4 | tail -1 || top -d1 | head -4 | tail -1
+    fi
     df -h
+}
+
+kernel() {
+    echo "--Kernel checks--"
+    if command -v sysctl >/dev/null 2>&1; then
+        for k in net.ipv4.ip_forward net.ipv4.conf.all.rp_filter net.ipv4.conf.default.rp_filter net.ipv4.tcp_syncookies net.ipv4.conf.all.accept_source_route; do
+            printf "%s: " "$k"
+            sysctl -n "$k" 2>/dev/null || echo "(not available)"
+        done
+    else
+        echo "sysctl not available"
+    fi
 }
 
 audit() {
     processes
     services
     terminals
+    infra
     system
     cron
 }
