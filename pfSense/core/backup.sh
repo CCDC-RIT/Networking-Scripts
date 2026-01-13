@@ -14,7 +14,7 @@ if [ "$#" -ne 1 ]; then
 fi
 
 backup() {
-    BACKUP_DIR="$BACKUP_DIR/$(date)"
+    BACKUP_DIR="$BACKUP_DIR/$(date "+%Y-%m-%d_%H:%M:%S")"
     mkdir "$BACKUP_DIR"
     
     cp -r "$GUI_SRC" "$BACKUP_DIR/www"          # GUI PHP files

@@ -5,7 +5,7 @@ USERS_REFERENCE="../util/info/users.txt"
 ADMINS_REFERENCE="../util/info/admins.txt"
 
 # Define suspicious groups that users shouldn't have
-SUSPICIOUS_GROUPS="wheel sudo admin root operator"
+SUSPICIOUS_GROUPS=$(cat ../util/info/suspicious_groups.txt)
 
 # Function to check if a user belongs to any suspicious groups
 check_suspicious_groups() {
@@ -28,8 +28,8 @@ check_suspicious_groups() {
     echo "$suspicious_found"
 }
 
-users() {
-    echo "#####Users#####"
+check_if_approved() {
+    echo "##### Users #####"
     
     if [ ! -f "$USERS_REFERENCE" ]; then
         echo "Warning: Users reference file not found: $USERS_REFERENCE"
@@ -72,7 +72,7 @@ users() {
     done < "/etc/passwd"
     
     echo ""
-    echo "#####Admins#####"
+    echo "##### Admins #####"
     
     # Check members of wheel/sudo groups who might not be in passwd with shells
     for group in wheel sudo admin; do
@@ -91,6 +91,10 @@ users() {
             fi
         fi
     done
+}
+
+users() {
+    check_if_approved
 }
 
 users
