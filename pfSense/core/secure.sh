@@ -1,9 +1,9 @@
 #!/bin/sh
 
 file_perms() {
-    chattr +i /etc/ssh/sshd_config
-    chattr +i /etc/rc_initial
-    chattr +i /etc/inc/auth.inc
+    chflags schg /etc/ssh/sshd_config
+    chflags schg /etc/rc_initial
+    chflags schg /etc/inc/auth.inc
 }
 
 secure() {
