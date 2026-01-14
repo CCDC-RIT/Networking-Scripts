@@ -146,25 +146,6 @@ NR>1 {
     fi
 }
 
-
-
-        # awk 'BEGIN{RS="<rule>";FS="\n"} NR>1 {
-        #     is_system=0; details=""
-        #     for(i=1;i<=NF;i++) {
-        #         if ($i ~ /<type>system<\/type>/) is_system=1
-        #         if ($i ~ /<descr>/) desc=$i
-        #         if ($i ~ /<action>/) act=$i
-        #         if ($i ~ /<interface>/) iface=$i
-        #         if ($i ~ /<source>/) src=$i
-        #         if ($i ~ /<destination>/) dst=$i
-        #     }
-        #     if (!is_system) {
-        #         details=desc " " act " " iface " " src " " dst
-        #         gsub(/<[^>]+>/, "", details)
-        #         print details
-        #     }
-        # }' /cf/conf/config.xml
-
 inventory() {
     users
     services

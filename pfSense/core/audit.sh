@@ -108,6 +108,10 @@ kernel() {
     else
         echo "sysctl not available"
     fi
+
+    #prints loaded modules
+    echo "--Loaded Kernel Modules--"
+    kldstat | awk 'NR>1 { print $5 }'
 }
 
 file_perms() {
