@@ -7,6 +7,7 @@ fi
 
 download() {
     if [ "$1" -eq "pfsense" ]; then
+        rm main.zip
         curl -L -O https://github.com/CCDC-RIT/Networking-Scripts/archive/refs/heads/main.zip
         unzip main.zip
         cd Networking-Scripts-main/pfSense
