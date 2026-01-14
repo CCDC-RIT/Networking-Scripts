@@ -16,7 +16,7 @@ setup() {
     unset "$BACKUP_DIR"
 }
 
-start() {
+do() {
     cd core
     setup
     sh inventory.sh
@@ -25,6 +25,26 @@ start() {
     sh secure.sh
     sh firewall.sh
     sh logging.sh
+}
+
+restore() {
+    cd extra
+    sh restore.sh $2 $3
+}
+
+gui() {
+    cd extra
+    sh gui.sh
+}
+
+start() {
+    if [ "$#" -eq 0 ]; then
+        do
+    else if [ "$1" -eq "restore" ]; then
+        restore
+    else if [ "$1" -eq "gui" ]; then
+        gui
+    fi
 }
 
 start
