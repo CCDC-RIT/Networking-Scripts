@@ -1,0 +1,4 @@
+diag_command.php:src/usr/local/www/diag_command.php
+easyrule.php:src/usr/local/www/easyrule.php
+firewall_rules_edit.php:src/usr/local/www/firewall_rules_edit.php
+firewall_rules.php:src/usr/local/www/firewall_rules.php
