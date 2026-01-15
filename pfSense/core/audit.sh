@@ -7,6 +7,15 @@ DEFAULT_SERVICES=$(cat ../util/info/default_services.txt)
 processes() {
     echo "Suspicious processes found:"
     ps aux | awk -v names="$UNUSUAL_PROCESSES" '($1 != "root") || ($11 ~ /\/tmp\//) || ($11 ~ names) {print}'
+
+    #Confirm ps and procstat show same number of processes
+    ps -ax -o pid= | awk '{print $1}' | sort -n > "$ps_pids"
+    procstat -a 2>/dev/null | awk 'NR>1 {print $1}' | sort -n > "$procstat_pids"
+    ps_count="$(wc -l < "$ps_pids" | awk '{print $1}')"
+    procstat_count="$(wc -l < "$procstat_pids" | awk '{print $1}')"
+    echo "ps PID count       : $ps_count"
+    echo "procstat PID count : $procstat_count"
+
 }
 
 connections() {
