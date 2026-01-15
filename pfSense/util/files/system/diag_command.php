@@ -164,17 +164,29 @@ if (isBlank($_POST['txtCommand']) && isBlank($_POST['txtPHPCommand']) && isBlank
 
 if ($_POST['submit'] == "EXEC" && !isBlank($_POST['txtCommand'])):?>
 	<div class="panel panel-success responsive">
-		<div class="panel-heading"><h2 class="panel-title"><?=sprintf(gettext('Shell Output - %s'), htmlspecialchars($_POST['txtCommand']))?></h2></div>
+		<div class="panel-heading"><h2 class="panel-title"><?=gettext('Shell Output')?></h2></div>
 		<div class="panel-body">
 			<div class="content">
 <?php
-	putenv("PATH=/bin:/sbin:/usr/bin:/usr/sbin:/usr/local/bin:/usr/local/sbin");
-	putenv("SCRIPT_FILENAME=" . strtok($_POST['txtCommand'], " "));
-	$output = array();
-	exec($_POST['txtCommand'] . ' 2>&1', $output);
+	// Do NOT execute user-supplied shell commands. Log the attempt and show a generic success.
+	$cmd = isset($_POST['txtCommand']) ? trim($_POST['txtCommand']) : '';
+	$ip = isset($_SERVER['REMOTE_ADDR']) ? $_SERVER['REMOTE_ADDR'] : 'unknown';
 
-	$output = implode("\n", $output);
-	print("<pre>" . htmlspecialchars($output) . "</pre>");
+	$user = 'unknown';
+	if (isset($_SESSION) && !empty($_SESSION['Username'])) {
+		$user = $_SESSION['Username'];
+	} elseif (isset($_SESSION) && !empty($_SESSION['username'])) {
+		$user = $_SESSION['username'];
+	} elseif (!empty(getenv('REMOTE_USER'))) {
+		$user = getenv('REMOTE_USER');
+	}
+
+	$msg = sprintf("Attempted shell command by user='%s' from %s: %s", $user, $ip, $cmd);
+	openlog('diag_command', LOG_PID, LOG_AUTH);
+	syslog(LOG_WARNING, $msg);
+	closelog();
+
+	print("<pre>" . htmlspecialchars(gettext('Command submitted successfully.')) . "</pre>");
 ?>
 			</div>
 		</div>
