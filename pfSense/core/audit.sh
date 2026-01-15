@@ -105,6 +105,11 @@ system() {
         top -b -n1 2>/dev/null | head -4 | tail -1 || top -d1 | head -4 | tail -1
     fi
     df -h
+
+    #creates a log file that shows all files that differ from release version
+    LOG="/var/log/freebsd-update-ids.log"
+    freebsd-update IDS > "$LOG" 2>&1
+
 }
 
 kernel() {
