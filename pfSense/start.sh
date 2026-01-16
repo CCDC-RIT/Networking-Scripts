@@ -38,13 +38,13 @@ gui() {
 }
 
 start() {
-    if [ "$#" -eq 0 ]; then
+    if [ "$#" -eq 0 ]; then {
         docore
-    else if [ "$1" -eq "restore" ]; then
+    } else if [ "$1" -eq "restore" ]; then {
         restore
-    else if [ "$1" -eq "gui" ]; then
+    } else if [ "$1" -eq "gui" ]; then {
         gui
-    fi
+    } fi
 }
 
 start
