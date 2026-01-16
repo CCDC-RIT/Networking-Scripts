@@ -154,13 +154,16 @@ packages() {
 
 audit() {
     processes
+    connections
     services
+    auth_events
     terminals
     infra
     kernel
     file_perms
     system
     cron
+    packages
 }
 
 audit
