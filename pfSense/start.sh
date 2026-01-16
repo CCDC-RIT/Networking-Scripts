@@ -40,11 +40,12 @@ gui() {
 start() {
     if [ "$#" -eq 0 ]; then 
         docore
-    else if [ "$1" -eq "restore" ]; then
+    elif [ "$1" -eq "restore" ]; then
         restore
-    else if [ "$1" -eq "gui" ]; then
+    elif [ "$1" -eq "gui" ]; then
         gui
-    fi
+    else
+        echo "Invalid parameter!"
     fi
 }
 
