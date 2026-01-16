@@ -15,7 +15,7 @@ setup() {
     unset "$BACKUP_DIR"
 }
 
-docore() {
+core() {
     cd core
     setup
     sh inventory.sh
@@ -38,7 +38,7 @@ gui() {
 
 start() {
     if [ "$#" -eq 0 ]; then 
-        docore
+        core
     elif [ "$1" -eq "restore" ]; then
         restore
     elif [ "$1" -eq "gui" ]; then
