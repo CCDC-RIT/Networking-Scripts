@@ -132,9 +132,9 @@ kernel() {
 
     echo ""
     echo "--Suspicious Kernel Modules--"
-    default_modules_file="../util/info/default_modules.txt"
+    default_modules_file="/home/admin/Networking-Scripts-main/pfSense/util/info/default_modules.txt"
     current_modules=$(kldstat | awk 'NR>1 {print $NF}')
-    echo "$current_modules" | while read -r mod; do
+    echo "$current_modules" | while read -r $mod; do
         if ! grep -Fxq "$mod" "$baseline_file"; then
             echo "[ALERT] Suspicious module loaded: $mod"
         fi
