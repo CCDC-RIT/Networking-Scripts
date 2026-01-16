@@ -6,25 +6,29 @@ if [ "$#" -ne 1 ]; then
 fi
 
 download() {
-    if [ "$1" -eq "pfsense" ]; then
-        rm main.zip
-        curl -L -O https://github.com/CCDC-RIT/Networking-Scripts/archive/refs/heads/main.zip
-        unzip main.zip
-        cd Networking-Scripts-main/pfSense
-        chmod +x start.sh
-    elif [ "$1" -eq "palo" ]; then
-        echo "TODO"
-    elif [ "$1" -eq "cisco" ]; then
-        echo "TODO"
-    else
-        echo "Invalid argument!"
-        exit
-    fi
+    case "$1" in
+        pfSense)
+            rm main.zip
+            curl -L -O https://github.com/CCDC-RIT/Networking-Scripts/archive/refs/heads/main.zip
+            unzip main.zip
+            cd Networking-Scripts-main/pfSense
+            chmod +x start.sh
+            ;;
+        palo)
+            echo "TODO"
+            ;;
+        cisco)
+            echo "TODO"
+            ;;
+        *)
+            echo "Invalid argument!"
+            ;;
+    esac
 }
 
 downloads() {
-    download
+    download $1
     echo "On your command captain!"
 }
 
-downloads
+downloads $1
