@@ -1050,6 +1050,9 @@ if ($_POST['save']) {
 		// Allow extending of the firewall edit page and include custom input validation
 		pfSense_handle_custom_code("/usr/local/pkg/firewall_rules/pre_write_config");
 
+		// Capture original rule for CLI alerting (if editing an existing rule)
+		$original_rule_for_alert = (isset($id) && isset($a_filter[$id])) ? $a_filter[$id] : null;
+
 		if (isset($id) && $a_filter[$id]) {
 			$tmpif = $filterent['interface'];
 			if (($tmpif == $if) || (isset($pconfig['floating']))) {
@@ -1104,6 +1107,32 @@ if ($_POST['save']) {
 		if (write_config(gettext("Firewall: Rules - saved/edited a firewall rule."))) {
 			mark_subsystem_dirty('filter');
 		}
+
+		// Send a concise CLI/syslog alert about the change so operators
+		// monitoring the system via command line receive details.
+		// Include whether it was created or edited, a short identifier,
+		// and a truncated JSON snapshot of old and new rule.
+		$action = ($original_rule_for_alert) ? 'edited' : 'created';
+		$oldjson = $original_rule_for_alert ? json_encode($original_rule_for_alert) : '';
+		$newjson = json_encode($filterent);
+		// Truncate to keep log messages reasonably sized
+		$oldshort = $oldjson ? substr($oldjson, 0, 800) : '';
+		$newshort = $newjson ? substr($newjson, 0, 800) : '';
+		// Normalize interface value for display
+		$ifdisplay = '';
+		if (isset($filterent['interface'])) {
+			if (is_array($filterent['interface'])) {
+				$ifdisplay = implode(',', $filterent['interface']);
+			} else {
+				$ifdisplay = $filterent['interface'];
+			}
+		}
+		$ruleid = isset($filterent['id']) && $filterent['id'] !== '' ? $filterent['id'] : '-';
+		$descr = isset($filterent['descr']) ? str_replace(array("\n", "\r", '"'), array('','',"'"), $filterent['descr']) : '';
+		$cli_msg = sprintf("Firewall rule %s: id=%s, if=%s, descr=%s, old=%s, new=%s",
+			$action, $ruleid, $ifdisplay, $descr, $oldshort, $newshort);
+		// Use /usr/bin/logger so that system log and CLI viewers get notified
+		exec('/usr/bin/logger -t pfSense ' . escapeshellarg($cli_msg));
 
 		if (isset($_POST['floating'])) {
 			header("Location: firewall_rules.php?if=FloatingRules");
