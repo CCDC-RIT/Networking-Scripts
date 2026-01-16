@@ -4,9 +4,8 @@ setup() {
     echo "#################################################"
     date
 
-    # Create obscure directory to store data
     stty -echo
-    read -r "Backup directory: " BACKUP_DIR
+    read -r BACKUP_DIR
     stty echo
     echo ""
 

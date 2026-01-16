@@ -1,25 +1,17 @@
 #!/bin/sh
 
-UNUSUAL_PROCESSES=$(paste -sd'|' ../util/info/unusual_processes.txt)
+UNUSUAL_PROCESSES=$(tr '\n' '|' < ../util/info/unusual_processes.txt | sed 's/|$//')
 DEFAULT_CRON=$(cat ../util/info/default_cron.txt)
 DEFAULT_SERVICES=$(cat ../util/info/default_services.txt)
 
 processes() {
     echo "Suspicious processes found:"
     ps aux | awk -v names="$UNUSUAL_PROCESSES" '($1 != "root") || ($11 ~ /\/tmp\//) || ($11 ~ names) {print}'
-
-    #Confirm ps and procstat show same number of processes
-    ps -ax -o pid= | awk '{print $1}' | sort -n > "$ps_pids"
-    procstat -a 2>/dev/null | awk 'NR>1 {print $1}' | sort -n > "$procstat_pids"
-    ps_count="$(wc -l < "$ps_pids" | awk '{print $1}')"
-    procstat_count="$(wc -l < "$procstat_pids" | awk '{print $1}')"
-    echo "ps PID count       : $ps_count"
-    echo "procstat PID count : $procstat_count"
-
+    echo ""
 }
 
 connections() {
-    echo "Network connections:"
+    echo "##### Network connections #####"
     echo "--TCP--"
     netstat -an | grep tcp | grep ESTABLISHED
     echo "--UDP--"
@@ -35,17 +27,19 @@ services() {
             echo "$svc"
         fi
     done
+
+    echo ""
 }
 
 auth_events() {
-    echo "Recent authentication events"
-
     echo "--SSH--"
     grep "sshd" /var/log/auth.log 2>/dev/null | tail -20 || echo "No SSH events in auth.log"
     
-    # Web GUI login attempts
+    echo ""
     echo "--Web GUI--"
     grep -E "(login|authentication)" /var/log/system.log 2>/dev/null | tail -10 || echo "No GUI auth events found"
+
+    echo ""
 }
 
 infra() {
@@ -54,6 +48,7 @@ infra() {
         tail -20 /var/log/dhcpd.log
     fi
 
+    echo ""
     echo "--DNS--"
     if [ -f "/var/log/resolver.log" ]; then
         echo "Recent DNS resolver events:"
@@ -81,6 +76,7 @@ terminals() {
 
     echo "Last 5 terminated user sessions:"
     last | grep -v 'still' | head -n 5
+    echo ""
 }
 
 # Check cron jobs for each user
@@ -95,6 +91,7 @@ cron() {
             fi
         done
     done
+    echo ""
 }
 
 # Check for rootkits and evaluate memory / kernel and disk state
@@ -132,24 +129,29 @@ kernel() {
     #prints loaded modules
     echo "--Loaded Kernel Modules, Review these for Any Unusual Modules--"
     kldstat | awk 'NR>1 { print $5 }'
+    echo ""
 }
 
 file_perms() {
     echo "--SUID/SGID files--"
     find / -xdev -type f \( -perm -4000 -o -perm -2000 \) -ls 2>/dev/null | head -n 50 || echo "find unavailable or no results"
 
+    echo ""
     echo "--World-writable files--"
     find / -xdev -type f -perm -002 -ls 2>/dev/null | head -n 50 || echo "find unavailable or no results"
+    echo ""
 }
 
 packages() {
     echo "--Packages--"
-    if command -v dpkg >/dev/null 2>&1; then
+    if command -v pkg >/dev/null 2>&1; then
         echo "Recently installed/removed (dpkg):"
         if [ -f /var/log/dpkg.log ]; then
             tail -n 20 /var/log/dpkg.log
         fi
     fi
+
+    echo ""
 }
 
 audit() {

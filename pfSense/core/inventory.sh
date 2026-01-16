@@ -5,7 +5,7 @@ users() {
     ADMIN_GROUP="admins"
     ADMIN_USERS=$(grep "^$ADMIN_GROUP:" /etc/group | cut -d: -f4 | tr ',' '\n')
 
-    echo "##### Users #####"
+    echo "##### Non System Users #####"
     while IFS=: read -r username _ uid _ _ home _; do
         if [ "$uid" -ge 1000 ]; then
             output="$username"
@@ -21,6 +21,8 @@ users() {
             echo "$output"
         fi
     done < /etc/passwd
+
+    echo ""
 }
 
 services() {
@@ -29,6 +31,7 @@ services() {
     cd ../util || echo "util directory is missing"
     diff --suppress-common-lines files/compare_services.txt info/default_services.txt
     cd ../core || echo "core direcotry is missing"
+    echo ""
 }
 
 # List zones
@@ -40,6 +43,7 @@ interfaces() {
 
     IFACE_COUNT=$(ifconfig -l | wc -w)
     echo "Number of network interfaces: $IFACE_COUNT"
+    echo ""
 }
 
 # List firewall rules
@@ -144,6 +148,8 @@ NR>1 {
     else
         echo "Firewall config not found."
     fi
+
+    echo ""
 }
 
 inventory() {

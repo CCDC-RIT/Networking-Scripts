@@ -91,6 +91,8 @@ check_if_approved() {
             fi
         fi
     done
+
+    echo ""
 }
 
 ssh() {
@@ -184,6 +186,7 @@ ssh() {
             echo "$pub_content" > "$KEYS_DIR/authorized_keys_for_$u"
         fi
     done < "$USERS_REFERENCE"
+    echo ""
 }
 
 users() {
