@@ -110,6 +110,12 @@ system() {
     LOG="/var/log/freebsd-update-ids.log"
     freebsd-update IDS > "$LOG" 2>&1
 
+    #integrity check on root and user filesystems
+    echo "--Filesystem integrity check--"
+    LOG_FILE="/var/log/integrity_scan.log"
+    mtree -e -p / -f /etc/mtree/BSD.root.dist >> "$LOG_FILE" 2>&1
+    mtree -e -p /usr -f /etc/mtree/BSD.usr.dist >> "$LOG_FILE" 2>&1
+
 }
 
 kernel() {
@@ -124,7 +130,7 @@ kernel() {
     fi
 
     #prints loaded modules
-    echo "--Loaded Kernel Modules--"
+    echo "--Loaded Kernel Modules, Review these for Any Unusual Modules--"
     kldstat | awk 'NR>1 { print $5 }'
 }
 
