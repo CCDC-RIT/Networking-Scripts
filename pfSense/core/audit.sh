@@ -132,10 +132,11 @@ kernel() {
 
     echo ""
     echo "--Suspicious Kernel Modules--"
+    default_module_file="/home/admin/Networking-Scripts-main/pfSense/util/info/default_modules.txt"
     suspicious_found=0
     loaded_modules=$(kldstat | awk 'NR>1 {print $5}') 
     for module in $loaded_modules; do
-        if ! grep -q "$module" "$WHITELIST_FILE"; then
+        if ! grep -q "$module" "$default_module_file"; then
             echo "[ALERT] Suspicious module loaded: $module"
             suspicious_found=1
         fi
