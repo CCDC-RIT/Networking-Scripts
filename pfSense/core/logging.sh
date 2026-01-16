@@ -1,8 +1,10 @@
 #!/bin/sh
 
 newsyslog() {
-    # Enable more verbose kernel logging
-    sysctl kern.log_level=7
+    echo "--Sysctl--"
+    sysctl kern.logsigexit=1
+    sysctl kern.log_console_output=1
+    sysctl kern.lognosys=0
     
     # Configure newsyslog for better log rotation
     cat >> /etc/newsyslog.conf.d/system.log << 'NEWSYSLOG'
@@ -36,6 +38,8 @@ NEWSYSLOG
     cat >> /etc/newsyslog.conf.d/portalauth.log << 'NEWSYSLOG'
 /var/log/portalauth.log 644  10   1024  *     Z    /var/run/syslog.pid  30
 NEWSYSLOG
+
+    echo ""
 }
 
 # Configure syslog-ng for advanced logging (if available)

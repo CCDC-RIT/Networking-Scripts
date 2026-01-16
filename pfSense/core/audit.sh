@@ -96,6 +96,7 @@ cron() {
 
 # Check for rootkits and evaluate memory / kernel and disk state
 system() {
+    echo "--Rootkits--"
     dmesg | grep -i taint || echo "No memory taint detected."
     # show a brief top line if available
     if command -v top >/dev/null 2>&1; then
@@ -104,15 +105,18 @@ system() {
     df -h
 
     #creates a log file that shows all files that differ from release version
+    echo ""
+    echo "--Updated Files--"
     LOG="/var/log/freebsd-update-ids.log"
     freebsd-update IDS > "$LOG" 2>&1
 
     #integrity check on root and user filesystems
+    echo ""
     echo "--Filesystem integrity check--"
     LOG_FILE="/var/log/integrity_scan.log"
     mtree -e -p / -f /etc/mtree/BSD.root.dist >> "$LOG_FILE" 2>&1
     mtree -e -p /usr -f /etc/mtree/BSD.usr.dist >> "$LOG_FILE" 2>&1
-
+    echo ""
 }
 
 kernel() {
@@ -126,7 +130,7 @@ kernel() {
         echo "sysctl not available"
     fi
 
-    #prints loaded modules
+    echo ""
     echo "--Loaded Kernel Modules, Review these for Any Unusual Modules--"
     kldstat | awk 'NR>1 { print $5 }'
     echo ""
