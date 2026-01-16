@@ -2,7 +2,7 @@ aesni.ko
 ds1307.ko
 hwpmc.ko
 ig4.ko
-jedec_dimm.ko 
+jedec_dimm.ko
 pcf8591.ko
 s35390a.ko
 amdpm.ko
