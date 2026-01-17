@@ -191,7 +191,7 @@ ssh() {
 
 users() {
     check_if_approved
-    ssh
+    # ssh
 }
 
 users

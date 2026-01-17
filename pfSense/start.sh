@@ -28,12 +28,13 @@ core() {
 
 restore() {
     cd extra
-    sh restore.sh $2 $3
+    sh restore.sh "$2"
 }
 
 gui() {
-    cd extra
-    sh gui.sh
+    echo "DO NOT USE"
+    # cd extra
+    # sh gui.sh
 }
 
 start() {
@@ -42,11 +43,11 @@ start() {
     fi
 
     case "$1" in
-        restore) restore;;
+        restore) restore "$2";;
         gui) gui;;
         backup) setup;;
         *) echo "Invalid parameter!";;
     esac
 }
 
-start
+start "$@"
