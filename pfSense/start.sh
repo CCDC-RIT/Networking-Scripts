@@ -39,13 +39,14 @@ gui() {
 start() {
     if [ "$#" -eq 0 ]; then 
         core
-    elif [ "$1" -eq "restore" ]; then
-        restore
-    elif [ "$1" -eq "gui" ]; then
-        gui
-    else
-        echo "Invalid parameter!"
     fi
+
+    case "$1" in
+        restore) restore;;
+        gui) gui;;
+        backup) setup;;
+        *) echo "Invalid parameter!";;
+    esac
 }
 
 start
