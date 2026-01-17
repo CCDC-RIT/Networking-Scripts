@@ -170,6 +170,12 @@ packages() {
     echo ""
 }
 
+apis() {
+    echo "-- Installed APIs: -- "
+    ls /usr/local/.pkg || echo "None"
+    echo ""
+}
+
 audit() {
     processes
     connections
@@ -182,6 +188,7 @@ audit() {
     system
     cron
     packages
+    apis
 }
 
 audit
