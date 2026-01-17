@@ -3,6 +3,7 @@
 UNUSUAL_PROCESSES=$(tr '\n' '|' < ../util/info/unusual_processes.txt | sed 's/|$//')
 DEFAULT_CRON=$(cat ../util/info/default_cron.txt)
 DEFAULT_SERVICES=$(cat ../util/info/default_services.txt)
+DEFAULT_MODULES=$(cat ../util/info/default_modules.txt)
 
 processes() {
     echo "Suspicious processes found:"
@@ -132,11 +133,10 @@ kernel() {
 
     echo ""
     echo "--Suspicious Kernel Modules--"
-    default_module_file="/home/admin/Networking-Scripts-main/pfSense/util/info/default_modules.txt"
     suspicious_found=0
     loaded_modules=$(kldstat | awk 'NR>1 {print $5}') 
     for module in $loaded_modules; do
-        if ! grep -q "$module" "$default_module_file"; then
+        if ! echo "$DEFAULT_MODULES" | grep -q "$module"; then
             echo "[ALERT] Suspicious module loaded: $module"
             suspicious_found=1
         fi
