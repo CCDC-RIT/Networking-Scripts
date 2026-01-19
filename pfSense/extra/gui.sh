@@ -19,6 +19,7 @@ move() {
             fi
 
             # attempt to restore from BACKUP_DIR
+            echo "Enter the secret directory"
             LATEST_BACKUP=""
             BACKUP_DIR=""
             stty -echo
@@ -26,9 +27,9 @@ move() {
             stty echo
 
             # Use the first entry inside BACKUP_DIR
-            first=$(ls -1d "$BACKUP_DIR"/* 2>/dev/null | head -n1)
-            if [ -n "$first" ] && [ -d "$first/usr/local/www" ]; then
-                LATEST_BACKUP="$first/usr/local/www"
+            first=$(ls -1t "$BACKUP_DIR" | head -n1)
+            if [ -n "$first" ] && [ -d "$BACKUP_DIR/$first/usr/local/www" ]; then
+                LATEST_BACKUP="$BACKUP_DIR/$first/usr/local/www"
             fi
 
             if [ -n "$LATEST_BACKUP" ]; then
@@ -42,12 +43,12 @@ move() {
                 echo "Restored and moved to /usr/local/www"
                 return 0
             else
-                echo "No suitable backup found in BACKUP_DIR ($BACKUP_DIR) to restore /usr/local/www"
+                echo "No suitable backup found in BACKUP_DIR to restore GUI"
                 return 3
             fi
             ;;
         *)
-            echo "Invalid parameter!"
+            echo "Invalid GUI parameter!"
             exit
             ;;
     esac

@@ -33,9 +33,8 @@ restore() {
 }
 
 gui() {
-    echo "DO NOT USE"
-    # cd extra
-    # sh gui.sh
+    cd extra
+    sh gui.sh "$1"
 }
 
 start() {
@@ -45,9 +44,9 @@ start() {
 
     case "$1" in
         restore) restore "$2";;
-        gui) gui;;
+        gui) gui "$2";;
         backup) setup;;
-        *) echo "Invalid parameter!";;
+        *) echo "Invalid start parameter!";;
     esac
 }
 
