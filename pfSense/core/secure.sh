@@ -7,24 +7,52 @@ file_perms() {
 }
 
 remove_suspicious_modules() {
-    suspicious_modules=$(tr '\n' ' ' < ../util/info/suspicious_modules.txt)
-    for module in $suspicious_modules; do 
+    # Resolve the suspicious_modules.txt path relative to this script
+    SCRIPT_DIR="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)"
+    SUSP_FILE="$SCRIPT_DIR/../util/files/suspicious_modules.txt"
+
+    if [ ! -f "$SUSP_FILE" ]; then
+        echo "ERROR: cannot open $SUSP_FILE (No such file or directory)"
+        return 1
+    fi
+
+    while IFS= read -r module || [ -n "$module" ]; do
         echo "Do you want to unload the module $module? (y/n)"
-        read answer 2>&1
-        answer= $(echo "$answer" | tr '[:upper:]' '[:lower:]')
+        read -r answer
+        answer="$(echo "$answer" | tr '[:upper:]' '[:lower:]')"
+
         if [ "$answer" = "y" ] || [ "$answer" = "yes" ]; then
-            kldunload "$module" 
-            echo "Unloaded module: $module"
+            if kldunload "$module" >/dev/null 2>&1; then
+                echo "Unloaded module: $module"
+            else
+                echo "Failed to unload module: $module"
+            fi
         else
             echo "Module $module has not been unloaded."
         fi
-    done
+    done < "$SUSP_FILE"
 }
+
+
+# remove_suspicious_modules() {
+#     suspicious_modules=$(tr '\n' ' ' < ../util/info/suspicious_modules.txt)
+#     for module in $suspicious_modules; do 
+#         echo "Do you want to unload the module $module? (y/n)"
+#         read -r answer
+#         answer= "$(echo "$answer" | tr '[:upper:]' '[:lower:]')"
+#         if [ "$answer" = "y" ] || [ "$answer" = "yes" ]; then
+#             kldunload "$module" 
+#             echo "Unloaded module: $module"
+#         else
+#             echo "Module $module has not been unloaded."
+#         fi
+#     done
+# }
 
 secure() {
     echo "Do you want to execute file_perms? (y/n)"
-    read answer 2>&1
-    answer= $(echo "$answer" | tr '[:upper:]' '[:lower:]')
+    read -r answer
+    answer= "$(echo "$answer" | tr '[:upper:]' '[:lower:]')"
     if [ "$answer" = "y" ] || [ "$answer" = "yes" ]; then
         file_perms
         echo "Executing file_perms."
@@ -35,8 +63,8 @@ secure() {
     fi
 
     echo "Do you want to unload suspicious kernel modules? (y/n)"
-    read answer 2>&1
-    answer= $(echo "$answer" | tr '[:upper:]' '[:lower:]')
+    read -r answer
+    answer= "$(echo "$answer" | tr '[:upper:]' '[:lower:]')"
     if [ "$answer" = "y" ] || [ "$answer" = "yes" ]; then
         remove_suspicious_modules
     else
