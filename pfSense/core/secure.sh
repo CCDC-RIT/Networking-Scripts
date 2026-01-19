@@ -10,7 +10,7 @@ remove_suspicious_modules() {
     suspicious_modules=$(tr '\n' ' ' < ../util/info/suspicious_modules.txt)
     for module in $suspicious_modules; do 
         read -p "Do you want to unload the module $module? (y/n)" answer
-        answer= ${answer,,}
+        answer= $(echo "$answer" | tr '[:upper:]' '[:lower:]')
         if [ "$answer" = "y" ] || [ "$answer" = "yes" ]; then
             kldunload "$module" 
             echo "Unloaded module: $module"
@@ -22,7 +22,7 @@ remove_suspicious_modules() {
 
 secure() {
     read -p "Do you want to execute file_perms? (y/n)" answer
-    answer= ${answer,,}
+    answer= $(echo "$answer" | tr '[:upper:]' '[:lower:]')
     if [ "$answer" = "y" ] || [ "$answer" = "yes" ]; then
         file_perms
         echo "Executing file_perms."
@@ -33,7 +33,7 @@ secure() {
     fi
 
     read -p "Do you want to unload suspicious kernel modules? (y/n)" answer
-    answer= ${answer,,}
+    answer= $(echo "$answer" | tr '[:upper:]' '[:lower:]')
     if [ "$answer" = "y" ] || [ "$answer" = "yes" ]; then
         remove_suspicious_modules
     else
