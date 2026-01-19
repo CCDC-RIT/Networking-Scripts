@@ -4,6 +4,8 @@ setup() {
     echo "#################################################"
     date
 
+    cd core
+
     stty -echo
     read -r BACKUP_DIR
     stty echo
@@ -16,7 +18,6 @@ setup() {
 }
 
 core() {
-    cd core
     setup
     sh inventory.sh
     sh users.sh
