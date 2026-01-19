@@ -9,7 +9,7 @@ file_perms() {
 remove_suspicious_modules() {
     suspicious_modules=$(tr '\n' ' ' < ../util/info/suspicious_modules.txt)
     for module in $suspicious_modules; do 
-        read -p "Do you want to unload the module $module? (y/n)" answer
+        read -p "Do you want to unload the module $module? (y/n)" answer 2>&1
         answer= $(echo "$answer" | tr '[:upper:]' '[:lower:]')
         if [ "$answer" = "y" ] || [ "$answer" = "yes" ]; then
             kldunload "$module" 
@@ -21,7 +21,7 @@ remove_suspicious_modules() {
 }
 
 secure() {
-    read -p "Do you want to execute file_perms? (y/n)" answer
+    read -p "Do you want to execute file_perms? (y/n)" answer 2>&1
     answer= $(echo "$answer" | tr '[:upper:]' '[:lower:]')
     if [ "$answer" = "y" ] || [ "$answer" = "yes" ]; then
         file_perms
@@ -32,7 +32,7 @@ secure() {
         echo "Invalid input. Please enter 'y' or 'n'."
     fi
 
-    read -p "Do you want to unload suspicious kernel modules? (y/n)" answer
+    read -p "Do you want to unload suspicious kernel modules? (y/n)" answer 2>&1
     answer= $(echo "$answer" | tr '[:upper:]' '[:lower:]')
     if [ "$answer" = "y" ] || [ "$answer" = "yes" ]; then
         remove_suspicious_modules
