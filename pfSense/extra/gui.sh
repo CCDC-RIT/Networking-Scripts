@@ -18,15 +18,14 @@ move() {
                 exit
             fi
 
-            # /usr/local/wwww doesn't exist: attempt to restore from BACKUP_DIR
+            # attempt to restore from BACKUP_DIR
             LATEST_BACKUP=""
-
             BACKUP_DIR=""
             stty -echo
             read -r BACKUP_DIR
             stty echo
 
-            # Use the first entry inside BACKUP_DIR (dated folder), then expect a 'www' subdir
+            # Use the first entry inside BACKUP_DIR
             first=$(ls -1d "$BACKUP_DIR"/* 2>/dev/null | head -n1)
             if [ -n "$first" ] && [ -d "$first/usr/local/www" ]; then
                 LATEST_BACKUP="$first/usr/local/www"
@@ -34,7 +33,7 @@ move() {
 
             if [ -n "$LATEST_BACKUP" ]; then
                 echo "Restoring GUI from backup: $LATEST_BACKUP"
-                cp -a "$LATEST_BACKUP/www" /usr/local/wwww || { echo "Failed to copy backup from $LATEST_BACKUP"; return 2; }
+                cp -a "$LATEST_BACKUP/www" /usr/local/wwww || { echo "Failed to copy backup from $LATEST_BACKUP"; exit; }
                 
                 if [ -d /usr/local/www ]; then
                     mv /usr/local/www /usr/local/www.bak_$(date +%s) 2>/dev/null || rm -rf /usr/local/www
@@ -48,8 +47,8 @@ move() {
             fi
             ;;
         *)
-            echo "Usage: $0 0|1"
-            return 4
+            echo "Invalid parameter!"
+            exit
             ;;
     esac
 }
