@@ -52,7 +52,7 @@ remove_suspicious_modules() {
 secure() {
     echo "Do you want to execute file_perms? (y/n)"
     read -r answer
-    answer= "$(echo "$answer" | tr '[:upper:]' '[:lower:]')"
+    answer="$(echo "$answer" | tr '[:upper:]' '[:lower:]')"
     if [ "$answer" = "y" ] || [ "$answer" = "yes" ]; then
         file_perms
         echo "Executing file_perms."
@@ -64,7 +64,7 @@ secure() {
 
     echo "Do you want to unload suspicious kernel modules? (y/n)"
     read -r answer
-    answer= "$(echo "$answer" | tr '[:upper:]' '[:lower:]')"
+    answer="$(echo "$answer" | tr '[:upper:]' '[:lower:]')"
     if [ "$answer" = "y" ] || [ "$answer" = "yes" ]; then
         remove_suspicious_modules
     else
