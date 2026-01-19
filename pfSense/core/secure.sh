@@ -8,7 +8,7 @@ file_perms() {
 
 remove_suspicious_modules() {
     # Resolve the suspicious_modules.txt path relative to this script
-    SCRIPT_DIR="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)"
+    SCRIPT_DIR="$(CDPATH= cd -- "$(dirname -- "$0")" && pwd)"
     SUSP_FILE="$SCRIPT_DIR/../util/files/suspicious_modules.txt"
 
     if [ ! -f "$SUSP_FILE" ]; then
