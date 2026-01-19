@@ -33,23 +33,8 @@ remove_suspicious_modules() {
     done < "$SUSP_FILE"
 }
 
-
-# remove_suspicious_modules() {
-#     suspicious_modules=$(tr '\n' ' ' < ../util/info/suspicious_modules.txt)
-#     for module in $suspicious_modules; do 
-#         echo "Do you want to unload the module $module? (y/n)"
-#         read -r answer
-#         answer= "$(echo "$answer" | tr '[:upper:]' '[:lower:]')"
-#         if [ "$answer" = "y" ] || [ "$answer" = "yes" ]; then
-#             kldunload "$module" 
-#             echo "Unloaded module: $module"
-#         else
-#             echo "Module $module has not been unloaded."
-#         fi
-#     done
-# }
-
 secure() {
+    echo " "
     echo "Do you want to execute file_perms? (y/n)"
     read -r answer
     answer="$(echo "$answer" | tr '[:upper:]' '[:lower:]')"
@@ -61,6 +46,7 @@ secure() {
     else
         echo "Invalid input. Please enter 'y' or 'n'."
     fi
+    echo " "
 
     echo "Do you want to unload suspicious kernel modules? (y/n)"
     read -r answer
@@ -70,6 +56,7 @@ secure() {
     else
         echo "Suspicious modules have not been unloaded."
     fi
+    echo " "
 }
 
 secure
