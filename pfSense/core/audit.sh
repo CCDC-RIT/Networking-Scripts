@@ -138,6 +138,7 @@ kernel() {
     for module in $loaded_modules; do
         if ! echo "$DEFAULT_MODULES" | grep -q "$module"; then
             echo "[ALERT] Suspicious module loaded: $module"
+            $module >> "../util/files/suspicious_modules.txt" 2>&1
             suspicious_found=1
         fi
     done
