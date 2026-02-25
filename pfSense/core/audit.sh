@@ -177,6 +177,19 @@ apis() {
     echo ""
 }
 
+open_files() {
+    echo "-- Open and Active Files: --"
+    lsof \
+    | grep -v /dev \
+    | grep -v /pfSense/ROOT/default \
+    | grep -v "\->"
+    echo ""
+
+    echo "-- Open and Inactive Files: --"
+    lsof +L1
+    echo ""
+}
+
 audit() {
     processes
     connections
@@ -190,6 +203,7 @@ audit() {
     cron
     packages
     apis
+    open_files
 }
 
 audit
