@@ -3,6 +3,13 @@
 set -eu
 
 REQUEST_NAME="$1"
+
+if [ "$1" = "pkg" ]; then
+	pkg-static -d update
+	pkg-static update -f
+	exit 0
+fi
+
 FILENAME=$(basename "${REQUEST_NAME}")
 
 BASE_URL="https://raw.githubusercontent.com/pfsense/pfsense/RELENG_2_7_2/src/usr/local/www"

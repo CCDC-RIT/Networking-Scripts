@@ -29,7 +29,7 @@ core() {
 
 restore() {
     cd extra
-    sh restore.sh "$2"
+    sh restore.sh "$1"
 }
 
 gui() {
