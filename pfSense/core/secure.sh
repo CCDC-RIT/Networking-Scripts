@@ -1,9 +1,10 @@
 #!/bin/sh
 
 file_perms() {
-    chflags schg /etc/ssh/sshd_config
-    chflags schg /etc/rc.initial
     chflags schg /etc/inc/auth.inc
+    chflags schg /etc/passwd
+    chflags schg /etc/rc.initial
+    chflags schg /etc/ssh/sshd_config
     chflags schg /root/.ssh/authorized_keys
 }
 
