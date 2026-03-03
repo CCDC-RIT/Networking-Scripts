@@ -7,6 +7,7 @@ CONFIG_SRC="/conf/config.xml"
 RULES_SRC="/tmp/rules.debug"
 AUTH_SRC="/etc/inc/auth.inc"
 BIN_SRC="/bin"
+SBIN_SRC="/sbin"
 
 # Used for debugging
 if [ "$#" -ne 1 ]; then
@@ -24,6 +25,7 @@ backup() {
     cp "$RULES_SRC" "$BACKUP_DIR/rules.debug"
     cp "$AUTH_SRC" "$BACKUP_DIR/auth.inc"
     cp -r "$BIN_SRC" "$BACKUP_DIR/bin"
+    cp -r "$SBIN_SRC" "$BACKUP_DIR/sbin"
 }
 
 backup
