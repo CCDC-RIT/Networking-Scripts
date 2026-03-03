@@ -6,6 +6,7 @@ GUI_SRC="/usr/local/www"
 CONFIG_SRC="/conf/config.xml"
 RULES_SRC="/tmp/rules.debug"
 AUTH_SRC="/etc/inc/auth.inc"
+BIN_SRC="/bin"
 
 # Used for debugging
 if [ "$#" -ne 1 ]; then
@@ -16,11 +17,13 @@ fi
 backup() {
     BACKUP_DIR="$BACKUP_DIR/$(date "+%Y-%m-%d_%H:%M:%S")"
     mkdir "$BACKUP_DIR"
+    mkdir "$BACKUP_DIR/bin"
     
-    cp -r "$GUI_SRC" "$BACKUP_DIR/www"          # GUI PHP files
-    cp "$CONFIG_SRC" "$BACKUP_DIR/config.xml"   # Main config file
-    cp "$RULES_SRC" "$BACKUP_DIR/rules.debug"   # Debug rules file
-    cp "$AUTH_SRC" "$BACKUP_DIR/auth.inc"       # Login check file
+    cp -r "$GUI_SRC" "$BACKUP_DIR/www"
+    cp "$CONFIG_SRC" "$BACKUP_DIR/config.xml"
+    cp "$RULES_SRC" "$BACKUP_DIR/rules.debug"
+    cp "$AUTH_SRC" "$BACKUP_DIR/auth.inc"
+    cp -r "$BIN_SRC" "$BACKUP_DIR/bin"
 }
 
 backup
