@@ -190,7 +190,7 @@ open_files() {
     echo ""
 }
 
-audit() {
+freebsd_audit() {
     processes
     connections
     services
@@ -206,4 +206,4 @@ audit() {
     open_files
 }
 
-audit
+freebsd_audit

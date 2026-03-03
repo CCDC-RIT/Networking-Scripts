@@ -21,7 +21,8 @@ core() {
     setup
     sh inventory.sh
     sh users.sh
-    sh audit.sh
+    sh freebsd_audit.sh
+    sh pfsense_audit.sh
     sh secure.sh
     sh firewall.sh
     sh logging.sh
