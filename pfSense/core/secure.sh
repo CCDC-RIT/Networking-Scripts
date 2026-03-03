@@ -10,6 +10,7 @@ file_perms() {
 
 remove_suspicious_modules() {
     # Resolve the suspicious_modules.txt path relative to this script
+    # shellcheck disable=SC1007
     SCRIPT_DIR="$(CDPATH= cd -- "$(dirname -- "$0")" && pwd)"
     SUSP_FILE="$SCRIPT_DIR/../util/files/suspicious_modules.txt"
     echo " "
