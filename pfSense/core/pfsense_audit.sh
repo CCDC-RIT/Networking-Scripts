@@ -3,6 +3,7 @@
 DEFAULT_WWW=$(cat ../util/info/default_www.txt)
 
 www() {
+    echo "----- WWW -----"
     if [ -d /usr/local/www ]; then
         # shellcheck disable=SC2164
         cd /usr/local/www
@@ -14,9 +15,14 @@ www() {
             fi
         done
     fi
+
+    # shellcheck disable=SC2164
+    cd /home/root/pfSense/
+    echo ""
 }
 
 pfsense_audit() {
     www
 }
 
+pfsense_audit
