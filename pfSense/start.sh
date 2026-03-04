@@ -44,6 +44,7 @@ gui() {
 start() {
     if [ "$#" -eq 0 ]; then 
         core
+        exit
     fi
 
     case "$1" in
