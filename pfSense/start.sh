@@ -4,6 +4,7 @@ setup() {
     echo "#################################################"
     date
 
+    # shellcheck disable=SC2164
     cd core
 
     stty -echo
@@ -29,13 +30,15 @@ core() {
 }
 
 restore() {
+    # shellcheck disable=SC2164
     cd extra
     sh restore.sh "$1"
 }
 
 gui() {
+    # shellcheck disable=SC2164
     cd extra
-    sh gui.sh "$1"
+    sh gui.sh
 }
 
 start() {
@@ -45,7 +48,7 @@ start() {
 
     case "$1" in
         restore) restore "$2";;
-        gui) gui "$2";;
+        gui) gui;;
         backup) setup;;
         *) echo "Invalid start parameter!";;
     esac
