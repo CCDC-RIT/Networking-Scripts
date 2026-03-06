@@ -1,0 +1,79 @@
+{
+  "networks": [
+    {
+      "ip": "10.2.x",
+      "name": "cloud",
+      "hosts": [
+        {
+          "ip": "12",
+          "name": "test",
+          "os": "test",
+          "remoting protocol": [
+            {
+              "remotingProtocol": "ssh",
+              "ports": [
+                "22"
+              ]
+            }
+          ],
+          "services": [
+            {
+              "serviceName": "web",
+              "ports": [
+                "80"
+              ]
+            }
+          ]
+        }, 
+        {
+          "ip": "16",
+          "name": "test3",
+          "os": "test3",
+          "remoting protocol": [
+            {
+              "remotingProtocol": "ssh",
+              "ports": [
+                "22"
+              ]
+            }
+          ],
+          "services": [
+            {
+              "serviceName": "web",
+              "ports": [
+                "80"
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "ip": "10.x.2",
+      "name": "lan",
+      "hosts": [
+        {
+          "ip": "13",
+          "name": "test2",
+          "os": "test2",
+          "remoting protocol": [
+            {
+              "remotingProtocol": "ssh",
+              "ports": [
+                "22"
+              ]
+            }
+          ],
+          "services": [
+            {
+              "serviceName": "ftp",
+              "ports": [
+                "21"
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
