@@ -1,8 +1,6 @@
 #!/bin/sh
 
-trap : INIT
-trap : QUIT
-trap : ILL
+trap '' INT QUIT TERM HUP
 
 while true
 do
