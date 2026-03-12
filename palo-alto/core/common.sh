@@ -28,15 +28,6 @@ ssh_exec() {
     local command="$1"
     validate_config
     
-    if [[ "$DRY_RUN" == "true" ]]; then
-        log "INFO" "[DRY-RUN] Would execute: $command"
-        return 0
-    fi
-    
-    if [[ "$DEBUG" == "true" ]]; then
-        log "DEBUG" "Executing SSH command: $command"
-    fi
-    
     local ssh_cmd="ssh"
     [[ -n "$PA_KEY" ]] && ssh_cmd="$ssh_cmd -i $PA_KEY"
     ssh_cmd="$ssh_cmd -p $PA_SSH_PORT -o ConnectTimeout=$SSH_TIMEOUT $PA_USER@$FIREWALL_IP"
