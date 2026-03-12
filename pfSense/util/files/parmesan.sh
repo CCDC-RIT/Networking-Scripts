@@ -16,7 +16,7 @@ do
 
     case "$input" in
         echo*)
-            if ["$elpased" -lt "$INTERVAL"]; then
+            if [ "$elapsed" -lt "$INTERVAL" ]; then
                 remaining=$((INTERVAL - elapsed))
                 echo "Sorry, please wait $remaining seconds before using wall or echo again. Thanks!"
             else
@@ -25,7 +25,7 @@ do
             fi
             ;;
         wall*)
-             if ["$elpased" -lt "$INTERVAL"]; then
+             if [ "$elapsed" -lt "$INTERVAL" ]; then
                 remaining=$((INTERVAL - elapsed))
                 echo "Sorry, please wait $remaining seconds before using wall or echo again. Thanks!"
             else
