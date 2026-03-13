@@ -54,6 +54,12 @@ security_rules() {
     echo ""
 }
 
+security_settings() {
+    log "INFO" "Current security settings:"
+    ssh_exec "show running config deviceconfig system service" || true
+    ssh_exec "show running config deviceconfig setting" || true
+}
+
 threat_prevention() {
     log "INFO" "Auditing threat prevention profiles"
     echo ""
@@ -115,6 +121,7 @@ audit() {
     interfaces
     routing
     security_rules
+    security_settings
     threat_prevention
     nat
     logging
