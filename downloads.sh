@@ -6,16 +6,18 @@ if [ "$#" -ne 1 ]; then
 fi
 
 download() {
+    rm main.zip
+    curl -L -O https://github.com/CCDC-RIT/Networking-Scripts/archive/refs/heads/main.zip
+    unzip main.zip
+
     case "$1" in
         pfSense)
-            rm main.zip
-            curl -L -O https://github.com/CCDC-RIT/Networking-Scripts/archive/refs/heads/main.zip
-            unzip main.zip
-            cd Networking-Scripts-main/pfSense
+            cd Networking-Scripts-main/pfSense || echo "Wrong dir!" && exit
             chmod +x start.sh
             ;;
         palo)
-            echo "TODO"
+            cd Networking-Scripts-main/palo-alto || echo "Wrong dir!" && exit
+            chmod+ +x start.sh
             ;;
         cisco)
             echo "TODO"
