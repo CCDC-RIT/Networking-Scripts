@@ -1,6 +1,7 @@
 #!/bin/bash
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+# shellcheck disable=SC1091
 source "$SCRIPT_DIR/palo-alto.conf"
 
 mkdir -p "$BACKUP_DIR" "$LOG_DIR" "$CONFIG_DIR"
@@ -8,7 +9,9 @@ mkdir -p "$BACKUP_DIR" "$LOG_DIR" "$CONFIG_DIR"
 log() {
     local level="$1"
     shift
+    # shellcheck disable=SC2124
     local message="$@"
+    # shellcheck disable=SC2155
     local timestamp=$(date '+%Y-%m-%d %H:%M:%S')
     echo "[$timestamp] [$level] $message" | tee -a "$LOG_DIR/palo-alto-$(date +%Y-%m-%d).log"
 }
@@ -60,6 +63,7 @@ ssh_op_exec() {
 }
 
 backup_config() {
+    # shellcheck disable=SC2155
     local backup_file="$BACKUP_DIR/pa-config-$(date +%Y%m%d_%H%M%S).xml"
     
     log "INFO" "Backing up configuration to $backup_file"
