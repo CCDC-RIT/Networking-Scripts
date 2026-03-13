@@ -8,6 +8,7 @@ source "$SCRIPT_DIR/common.sh"
 system_info() {
     log "INFO" "Collecting system information"
     
+    # shellcheck disable=SC2155
     local inv_file="$CONFIG_DIR/system-info-$(date +%Y%m%d_%H%M%S).txt"
     
     {
@@ -20,6 +21,7 @@ system_info() {
 interface_info() {
     log "INFO" "Collecting interface information"
     
+    # shellcheck disable=SC2155
     local inv_file="$CONFIG_DIR/interfaces-$(date +%Y%m%d_%H%M%S).txt"
     
     {
@@ -35,6 +37,7 @@ interface_info() {
 zone_info() {
     log "INFO" "Collecting zone information"
     
+    # shellcheck disable=SC2155
     local inv_file="$CONFIG_DIR/zones-$(date +%Y%m%d_%H%M%S).txt"
     
     {
@@ -47,6 +50,7 @@ zone_info() {
 policy_info() {
     log "INFO" "Collecting security policy information"
     
+    # shellcheck disable=SC2155
     local inv_file="$CONFIG_DIR/policies-$(date +%Y%m%d_%H%M%S).txt"
     
     {
@@ -59,6 +63,7 @@ policy_info() {
 routing_info() {
     log "INFO" "Collecting routing information"
     
+    # shellcheck disable=SC2155
     local inv_file="$CONFIG_DIR/routing-$(date +%Y%m%d_%H%M%S).txt"
     
     {
