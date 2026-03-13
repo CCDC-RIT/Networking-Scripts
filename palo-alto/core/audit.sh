@@ -121,6 +121,8 @@ audit() {
     dns
     ha
     management_access
+
+    # ssh_exec "request commit"; log "INFO" "Changes committed"
 }
 
 audit

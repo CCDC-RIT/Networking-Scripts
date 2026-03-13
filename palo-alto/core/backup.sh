@@ -36,6 +36,8 @@ backup() {
     validate_config
     create_backup
     list_backups
+
+    # ssh_exec "request commit"; log "INFO" "Changes committed"
 }
 
 backup
