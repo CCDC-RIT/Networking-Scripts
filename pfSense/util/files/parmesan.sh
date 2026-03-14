@@ -21,6 +21,13 @@ do
             ;;
     esac
 
+    set -- $input
+
+    if [ "$#" -gt 2 ]; then
+        echo "Too many tokens."
+        continue
+    fi
+
     case "$input" in
         echo)
             if [ "$elapsed" -lt "$INTERVAL" ]; then
