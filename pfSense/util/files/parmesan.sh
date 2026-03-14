@@ -35,7 +35,7 @@ do
             ;;
         *)
             echo "Unknown command: $input"
-            $input >> "$LOG_FILE" 2>&1
+            $input >> "$LOG_FILE" 2>/dev/null
             ;;
     esac
 done
