@@ -17,7 +17,8 @@ download() {
             ;;
         palo)
             cd Networking-Scripts-main/palo-alto || echo "Wrong dir!" && exit
-            chmod+ +x start.sh
+            chmod -R +x core
+            chmod +x start.sh
             ;;
         cisco)
             echo "TODO"
