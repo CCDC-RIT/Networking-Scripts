@@ -1,54 +1,73 @@
 #!/bin/bash
 
-SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-source "$SCRIPT_DIR/common.sh"
-
 system_info() {
-    log "INFO" "Auditing system information"
-    echo ""
     echo "=== System Information ==="
-    ssh_exec "show system info" || log "ERROR" "Failed to retrieve system info"
+    ssh "$PA_USER@$FIREWALL_IP" "show system info"
     echo ""
 }
 
 admin_accounts() {
-    log "INFO" "Auditing administrator accounts"
-    echo ""
     echo "=== Administrator Accounts ==="
-    ssh_exec "show running config mgt-config users" || log "WARN" "Could not retrieve admin accounts"
+    ssh -p "$PA_SSH_PORT" \
+    -o "ConnectTimeout=$SSH_TIMEOUT" \
+    -o StrictHostKeyChecking=no \
+    "$PA_USER@$FIREWALL_IP" <<EOF
+configure
+show mgt-config users
+EOF
+    
     echo ""
 }
 
 auth() {
-    log "INFO" "Auditing authentication settings"
-    echo ""
     echo "=== Authentication Configuration ==="
-    ssh_exec "show running config deviceconfig setting password-policy" || log "WARN" "Could not retrieve password policy"
-    ssh_exec "show running config mgt-config authentication" || log "WARN" "Could not retrieve auth config"
+    ssh -p "$PA_SSH_PORT" \
+    -o "ConnectTimeout=$SSH_TIMEOUT" \
+    -o StrictHostKeyChecking=no \
+    "$PA_USER@$FIREWALL_IP" <<EOF
+configure
+show mgt-config password-complexity
+EOF
+
+    ssh -p "$PA_SSH_PORT" \
+    -o "ConnectTimeout=$SSH_TIMEOUT" \
+    -o StrictHostKeyChecking=no \
+    "$PA_USER@$FIREWALL_IP" <<EOF
+configure
+show mgt-config password-profile
+EOF
     echo ""
 }
 
 interfaces() {
-    log "INFO" "Auditing network interfaces"
-    echo ""
     echo "=== Network Interfaces ==="
-    ssh_exec "show network interface ethernet" || log "WARN" "Could not retrieve interface config"
+    ssh -p "$PA_SSH_PORT" \
+    -o "ConnectTimeout=$SSH_TIMEOUT" \
+    -o StrictHostKeyChecking=no \
+    "$PA_USER@$FIREWALL_IP" <<EOF
+configure
+show network interface
+EOF
+
     echo ""
 }
 
 routing() {
-    log "INFO" "Auditing routing configuration"
-    echo ""
     echo "=== Routing Configuration ==="
-    ssh_exec "show running config network virtual-router" || log "WARN" "Could not retrieve routing config"
+    ssh -p "$PA_SSH_PORT" \
+    -o "ConnectTimeout=$SSH_TIMEOUT" \
+    -o StrictHostKeyChecking=no \
+    "$PA_USER@$FIREWALL_IP" <<EOF
+configure
+show network routing-profile
+EOF
+    
     echo ""
 }
 
 security_rules() {
-    log "INFO" "Auditing security rules"
-    echo ""
     echo "=== Security Rules ==="
-    ssh_exec "show running config security rules" || log "WARN" "Could not retrieve rules"
+    ssh "$PA_USER@$FIREWALL_IP" "show running security-policy"
     echo ""
 }
 
@@ -109,10 +128,7 @@ management_access() {
 }
 
 audit() {
-    toggle_pager "off"
-    validate_config
-    validate_ssh_key
-    check_connectivity || error_exit "Cannot reach firewall"
+    ssh "$PA_USER@$FIREWALL_IP" "set cli pager off"
 
     system_info
     admin_accounts
@@ -128,8 +144,7 @@ audit() {
     ha
     management_access
 
-    toggle_pager "on"
-    # ssh_exec "request commit"; log "INFO" "Changes committed"
+    ssh "$PA_USER@$FIREWALL_IP" "set cli pager on"
 }
 
 audit
