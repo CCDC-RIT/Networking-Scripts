@@ -1,61 +1,104 @@
 #!/bin/bash
 
-SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-source "$SCRIPT_DIR/common.sh"
-
 disable_services() {
-    log "INFO" "Disabling XML API"
-    ssh_exec "set deviceconfig system service disable-http-server yes" || log "WARN" "HTTP server already disabled"
-    
-    log "INFO" "Disabling telnet"
-    ssh_exec "set deviceconfig system service disable-telnet yes" || log "WARN" "Telnet already disabled"
+    echo "=== Disable Insecure Services ==="
+    ssh -p "$PA_SSH_PORT" \
+    -o "ConnectTimeout=$SSH_TIMEOUT" \
+    -o StrictHostKeyChecking=no \
+    "$PA_USER@$FIREWALL_IP" <<EOF
+configure
+set deviceconfig system service disable-http yes
+set deviceconfig system service disable-telnet yes
+EOF
+
+    echo ""
 }
 
 password_policy() {
-    log "INFO" "Setting strong password policy"
-    ssh_exec "set deviceconfig setting password-policy enabled yes"
-    ssh_exec "set deviceconfig setting password-policy minimum-length 12"
-    ssh_exec "set deviceconfig setting password-policy password-history-count 5"
-    ssh_exec "set deviceconfig setting password-policy password-expiration 90"
+    echo "=== Password Policy ==="
+    ssh -p "$PA_SSH_PORT" \
+    -o "ConnectTimeout=$SSH_TIMEOUT" \
+    -o StrictHostKeyChecking=no \
+    "$PA_USER@$FIREWALL_IP" <<EOF
+configure
+set mgt-config password-complexity enabled yes
+set mgt-config password-complexity minimum-length 12
+set mgt-config password-complexity password-history-count 5
+set mgt-config password-complexity password-change-period 90
+EOF
+
+    echo ""
 }
 
 configure_session_timeout() {
-    log "INFO" "Configuring session timeouts"
-    
-    ssh_exec "set deviceconfig setting session timeout 15" || log "WARN" "Session timeout already set"
-    ssh_exec "set deviceconfig setting default-session-timeout 15" || log "WARN" "Default session timeout already set"
+    echo "=== Session Timeout ==="
+    ssh -p "$PA_SSH_PORT" \
+    -o "ConnectTimeout=$SSH_TIMEOUT" \
+    -o StrictHostKeyChecking=no \
+    "$PA_USER@$FIREWALL_IP" <<EOF
+configure
+set deviceconfig setting management idle-timeout 15
+EOF
+
+    echo ""
 }
 
 https() {
-    log "INFO" "Disabling HTTP management"
-    ssh_exec "set deviceconfig system service disable-http yes" || log "WARN" "HTTP already disabled"
+    echo "=== HTTPS Management Only ==="
+    ssh -p "$PA_SSH_PORT" \
+    -o "ConnectTimeout=$SSH_TIMEOUT" \
+    -o StrictHostKeyChecking=no \
+    "$PA_USER@$FIREWALL_IP" <<EOF
+configure
+set deviceconfig system service disable-http yes
+EOF
+
+    echo ""
 }
 
 enable_threat_prevention() {
-    log "INFO" "Enabling antivirus"
-    ssh_exec "set import security profile virus default update-schedule-offset 0" || log "WARN" "Antivirus configuration exists"
-    
-    log "INFO" "Enabling anti-spyware"
-    ssh_exec "set import security profile spyware default update-schedule-offset 0" || log "WARN" "Anti-spyware configuration exists"
-    
-    log "INFO" "Enabling malware analysis"
-    ssh_exec "set threat-prevention malware-analysis enabled yes" || log "WARN" "Malware analysis already enabled"
+    echo "=== Threat Prevention Profiles ==="
+    ssh -p "$PA_SSH_PORT" \
+    -o "ConnectTimeout=$SSH_TIMEOUT" \
+    -o StrictHostKeyChecking=no \
+    "$PA_USER@$FIREWALL_IP" <<EOF
+configure
+set profiles antivirus default
+set profiles spyware default
+set profiles vulnerability default
+EOF
+
+    echo ""
 }
 
 configure_tls() {
-    log "INFO" "Setting minimum TLS version to 1.2"
-    ssh_exec "set deviceconfig system service ssl-protocol-version tlsv1_2" || log "WARN" "SSL/TLS already configured"
+    echo "=== TLS Configuration ==="
+    ssh -p "$PA_SSH_PORT" \
+    -o "ConnectTimeout=$SSH_TIMEOUT" \
+    -o StrictHostKeyChecking=no \
+    "$PA_USER@$FIREWALL_IP" <<EOF
+configure
+set deviceconfig system ssl-tls-service-profile Default
+EOF
+
+    echo ""
 }
 
 configure_audit_logging() {
-    ssh_exec "set deviceconfig system auditlog enable yes" || log "WARN" "Audit logging configuration exists"
-    log "INFO" "Audit logging enabled for administrative actions"
+    echo "=== Audit Logging ==="
+    ssh -p "$PA_SSH_PORT" \
+    -o "ConnectTimeout=$SSH_TIMEOUT" \
+    -o StrictHostKeyChecking=no \
+    "$PA_USER@$FIREWALL_IP" <<EOF
+configure
+set shared log-settings config match-list default action send-to-panorama no
+EOF
+
+    echo ""
 }
 
 secure() {
-    validate_config
-    validate_ssh_key
-    check_connectivity || error_exit "Cannot reach firewall"
+    ssh "$PA_USER@$FIREWALL_IP" "set cli pager off"
 
     disable_services
     password_policy
@@ -65,7 +108,8 @@ secure() {
     configure_tls
     configure_audit_logging 
 
-    # ssh_exec "request commit"; log "INFO" "Changes committed"
+    ssh "$PA_USER@$FIREWALL_IP" "set cli pager on"
+    # ssh "$PA_USER@$FIREWALL_IP" "request commit"
 }
 
 secure
