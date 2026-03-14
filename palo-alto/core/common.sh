@@ -85,6 +85,11 @@ ssh_op_exec() {
     ssh_exec "request system info | get" "$command"
 }
 
+toggle_pager() {
+    local command="$1"
+    ssh_exec "set cli pager $command"
+}
+
 check_connectivity() {
     log "INFO" "Checking connectivity to $FIREWALL_IP:$PA_SSH_PORT"
     
