@@ -1,65 +1,97 @@
 #!/bin/bash
 
-SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-source "$SCRIPT_DIR/common.sh"
-
 configure_traffic_logging() {
-    log "INFO" "Configuring traffic logging"
-    ssh_exec "set deviceconfig setting log-settings log-traffic yes" || log "WARN" "Traffic logging configuration may exist"
+    echo "=== Configure Traffic Logging ==="
+    ssh -p "$PA_SSH_PORT" \
+    -o "ConnectTimeout=$SSH_TIMEOUT" \
+    -o StrictHostKeyChecking=no \
+    "$PA_USER@$FIREWALL_IP" <<EOF
+configure
+set log-settings profiles default match-list default send-to-panorama no
+EOF
+
+    echo ""
 }
 
 configure_threat_logging() {
-    log "INFO" "Configuring threat logging"
-    
-    ssh_exec "set deviceconfig setting log-settings log-threat yes" || log "WARN" "Threat logging configuration may exist"
-    ssh_exec "set deviceconfig setting log-settings log-url yes" || log "WARN" "URL logging may already be configured"
-    ssh_exec "set deviceconfig setting log-settings log-file yes" || log "WARN" "File logging may already be configured"
+    echo "=== Configure Threat Logging ==="
+    ssh -p "$PA_SSH_PORT" \
+    -o "ConnectTimeout=$SSH_TIMEOUT" \
+    -o StrictHostKeyChecking=no \
+    "$PA_USER@$FIREWALL_IP" <<EOF
+configure
+set log-settings profiles default match-list default log-type threat
+set log-settings profiles default match-list default send-to-panorama no
+EOF
+
+    echo ""
 }
 
 configure_system_logging() {
-    log "INFO" "Configuring system event logging"
-    
-    ssh_exec "set deviceconfig setting log-settings log-system yes" || log "WARN" "System logging may already be configured"
-    ssh_exec "set deviceconfig setting log-settings log-auth yes" || log "WARN" "Authentication logging may already be configured"
+    echo "=== Configure System Logging ==="
+    ssh -p "$PA_SSH_PORT" \
+    -o "ConnectTimeout=$SSH_TIMEOUT" \
+    -o StrictHostKeyChecking=no \
+    "$PA_USER@$FIREWALL_IP" <<EOF
+configure
+set shared log-settings system match-list default action send-to-panorama no
+set shared log-settings config match-list default action send-to-panorama no
+EOF
+
+    echo ""
 }
 
 configure_log_storage() {
-    log "INFO" "Configuring local log storage"
-    
-    ssh_exec "set deviceconfig log-settings disk-quota 10 enable yes" || log "WARN" "Log quota configuration may exist"
+    echo "=== Configure Local Log Storage ==="
+    ssh -p "$PA_SSH_PORT" \
+    -o "ConnectTimeout=$SSH_TIMEOUT" \
+    -o StrictHostKeyChecking=no \
+    "$PA_USER@$FIREWALL_IP" <<EOF
+configure
+set deviceconfig setting logging max-log-storage 10
+EOF
+
+    echo ""
 }
 
 show_logging_config() {
-    log "INFO" "Current logging configuration:"
-    echo ""
     echo "=== Log Settings ==="
-    ssh_exec "show running config deviceconfig log-settings" || log "WARN" "Could not retrieve log settings"
+    ssh -p "$PA_SSH_PORT" \
+    -o "ConnectTimeout=$SSH_TIMEOUT" \
+    -o StrictHostKeyChecking=no \
+    "$PA_USER@$FIREWALL_IP" <<EOF
+configure
+show deviceconfig setting logging
+show log-settings profiles
+EOF
+
     echo ""
     echo "=== Log Collectors ==="
-    ssh_exec "show running config log-collector" || log "WARN" "No external log collectors configured"
+    ssh -p "$PA_SSH_PORT" \
+    -o "ConnectTimeout=$SSH_TIMEOUT" \
+    -o StrictHostKeyChecking=no \
+    "$PA_USER@$FIREWALL_IP" <<EOF
+configure
+show log-collector-group
+EOF
+
     echo ""
 }
 
 view_recent_logs() {
-    log "INFO" "Recent system logs:"
-    echo ""
     echo "=== Last 50 System Events ==="
-    ssh_exec "show log system | tail 50" || log "WARN" "Could not retrieve system logs"
+    ssh "$PA_USER@$FIREWALL_IP" "show log system direction backward count 50"
     echo ""
 }
 
 view_security_logs() {
-    log "INFO" "Recent security logs:"
-    echo ""
     echo "=== Last 50 Security Events ==="
-    ssh_exec "show log security | tail 50" || log "WARN" "Could not retrieve security logs"
+    ssh "$PA_USER@$FIREWALL_IP" "show log threat direction backward count 50"
     echo ""
 }
 
 logging() {
-    validate_config
-    validate_ssh_key
-    check_connectivity || error_exit "Cannot reach firewall"
+    ssh "$PA_USER@$FIREWALL_IP" "set cli pager off"
 
     configure_traffic_logging
     configure_threat_logging
@@ -69,8 +101,9 @@ logging() {
     view_recent_logs
     view_security_logs 
     show_logging_config
-    
-    # ssh_exec "request commit"; log "INFO" "Changes committed"
+
+    ssh "$PA_USER@$FIREWALL_IP" "set cli pager on"
+    # ssh "$PA_USER@$FIREWALL_IP" "request commit"
 }
 
 logging
