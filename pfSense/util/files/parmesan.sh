@@ -2,7 +2,7 @@
 
 trap '' INT QUIT TERM HUP
 
-LOG_FILE="/var/log/sharp_cheddar.log"
+LOG_FILE="/var/log/parmesan.log"
 INTERVAL=600 #10 minutes
 LAST_EXECUTED=0
 
