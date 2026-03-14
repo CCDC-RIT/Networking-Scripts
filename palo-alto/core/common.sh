@@ -41,6 +41,7 @@ ssh_exec() {
         "$PA_USER@$FIREWALL_IP"
         "$command"
     )
+
     [[ -n "$PA_KEY" ]] && ssh_cmd=(ssh -i "$PA_KEY" "${ssh_cmd[@]:1}")
 
     if command -v timeout >/dev/null 2>&1; then
@@ -53,41 +54,9 @@ ssh_exec() {
     return $?
 }
 
-ssh_exec_timeout() {
-    local timeout="$1"
-    local command="$2"
-    validate_config
-
-    local -a ssh_cmd=(
-        ssh
-        -p "$PA_SSH_PORT"
-        -o "ConnectTimeout=$timeout"
-        -o "StrictHostKeyChecking=no"
-        -o "ServerAliveInterval=15"
-        -o "ServerAliveCountMax=2"
-        "$PA_USER@$FIREWALL_IP"
-        "$command"
-    )
-    [[ -n "$PA_KEY" ]] && ssh_cmd=(ssh -i "$PA_KEY" "${ssh_cmd[@]:1}")
-
-    if command -v timeout >/dev/null 2>&1; then
-        timeout "$timeout" "${ssh_cmd[@]}"
-    elif command -v gtimeout >/dev/null 2>&1; then
-        gtimeout "$timeout" "${ssh_cmd[@]}"
-    else
-        ssh "${ssh_cmd[@]:1}"
-    fi
-    return $?
-}
-
 ssh_op_exec() {
     local command="$1"
     ssh_exec "request system info | get" "$command"
-}
-
-toggle_pager() {
-    local command="$1"
-    ssh_exec "set cli pager $command"
 }
 
 check_connectivity() {

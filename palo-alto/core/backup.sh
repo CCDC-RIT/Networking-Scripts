@@ -1,10 +1,8 @@
 #!/bin/bash
 
-set -euo pipefail
-
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 # shellcheck disable=SC1091
-source "$SCRIPT_DIR/../core/common.sh"
+source "$SCRIPT_DIR/../config.conf"
 
 list_backups() {
     log "INFO" "Available backup files:"
@@ -24,8 +22,14 @@ create_backup() {
     
     # shellcheck disable=SC2155
     local backup_file="$BACKUP_DIR/pa-config-$(date +%Y%m%d_%H%M%S).xml"
+    local backup_command
+    backup_command=$(cat <<'EOF'
+configure
+show
+EOF
+)
     
-    ssh_exec "configure; show running config" > "$backup_file" 2>&1
+    ssh_exec "$backup_command" > "$backup_file" 2>&1
     
     if [[ $? -eq 0 ]]; then
         log "INFO" "Backup completed: $backup_file"
@@ -38,11 +42,11 @@ create_backup() {
 }
 
 backup() {
-    toggle_pager "off"
+    ssh_exec "set cli pager off"
     validate_config
     create_backup
     list_backups
-    toggle_pager "on"
+    ssh_exec "set cli pager on"
 }
 
 backup

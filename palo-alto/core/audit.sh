@@ -1,7 +1,5 @@
 #!/bin/bash
 
-set -euo pipefail
-
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 source "$SCRIPT_DIR/common.sh"
 
@@ -111,6 +109,7 @@ management_access() {
 }
 
 audit() {
+    toggle_pager "off"
     validate_config
     validate_ssh_key
     check_connectivity || error_exit "Cannot reach firewall"
@@ -129,6 +128,7 @@ audit() {
     ha
     management_access
 
+    toggle_pager "on"
     # ssh_exec "request commit"; log "INFO" "Changes committed"
 }
 
