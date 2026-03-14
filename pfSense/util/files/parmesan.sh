@@ -15,7 +15,23 @@ do
     elapsed=$((now - LAST_EXECUTED))
 
     case "$input" in
-        echo*)
+        *'|'*|*';'*|*'&'*|*'`'*|*'$('*|*'>'*|*'<'*)
+            echo "Special shell characters are not allowed."
+            continue
+            ;;
+    esac
+
+    case "$input" in
+        echo)
+            if [ "$elapsed" -lt "$INTERVAL" ]; then
+                remaining=$((INTERVAL - elapsed))
+                echo "Sorry, please wait $remaining seconds before using wall or echo again. Thanks!"
+            else
+                /bin/echo
+                LAST_EXECUTED=$now
+            fi
+            ;;
+        echo\ *)
             if [ "$elapsed" -lt "$INTERVAL" ]; then
                 remaining=$((INTERVAL - elapsed))
                 echo "Sorry, please wait $remaining seconds before using wall or echo again. Thanks!"
@@ -24,18 +40,27 @@ do
                 LAST_EXECUTED=$now
             fi
             ;;
-        wall*)
-             if [ "$elapsed" -lt "$INTERVAL" ]; then
+        wall)
+            if [ "$elapsed" -lt "$INTERVAL" ]; then
                 remaining=$((INTERVAL - elapsed))
                 echo "Sorry, please wait $remaining seconds before using wall or echo again. Thanks!"
             else
-                /usr/bin/wall "${input#wall }"
+                /bin/wall
+                LAST_EXECUTED=$now
+            fi
+            ;;
+        wall\ *)
+            if [ "$elapsed" -lt "$INTERVAL" ]; then
+                remaining=$((INTERVAL - elapsed))
+                echo "Sorry, please wait $remaining seconds before using wall or echo again. Thanks!"
+            else
+                printf '%s\n' "${input#wall }" | /usr/bin/wall
                 LAST_EXECUTED=$now
             fi
             ;;
         *)
             echo "Unknown command: $input"
-            $input >> "$LOG_FILE" 2>/dev/null
+            "$input" >> "$LOG_FILE" 2>/dev/null
             ;;
     esac
 done
