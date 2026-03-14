@@ -117,7 +117,7 @@ audit() {
 
     system_info
     admin_accounts
-    authentication
+    auth
     interfaces
     routing
     security_rules
