@@ -25,7 +25,7 @@ create_backup() {
     # shellcheck disable=SC2155
     local backup_file="$BACKUP_DIR/pa-config-$(date +%Y%m%d_%H%M%S).xml"
     
-    ssh_exec "show running config" > "$backup_file" 2>&1
+    ssh_exec "configure; show running config" > "$backup_file" 2>&1
     
     if [[ $? -eq 0 ]]; then
         log "INFO" "Backup completed: $backup_file"
@@ -38,9 +38,11 @@ create_backup() {
 }
 
 backup() {
+    toggle_pager "off"
     validate_config
     create_backup
     list_backups
+    toggle_pager "on"
 }
 
 backup
