@@ -30,12 +30,26 @@ validate_config() {
 ssh_exec() {
     local command="$1"
     validate_config
-    
-    local ssh_cmd="ssh"
-    [[ -n "$PA_KEY" ]] && ssh_cmd="$ssh_cmd -i $PA_KEY"
-    ssh_cmd="$ssh_cmd -p $PA_SSH_PORT -o ConnectTimeout=$SSH_TIMEOUT $PA_USER@$FIREWALL_IP"
-    
-    eval "$ssh_cmd '$command'"
+
+    local -a ssh_cmd=(
+        ssh
+        -p "$PA_SSH_PORT"
+        -o "ConnectTimeout=$SSH_TIMEOUT"
+        -o "StrictHostKeyChecking=no"
+        -o "ServerAliveInterval=15"
+        -o "ServerAliveCountMax=2"
+        "$PA_USER@$FIREWALL_IP"
+        "$command"
+    )
+    [[ -n "$PA_KEY" ]] && ssh_cmd=(ssh -i "$PA_KEY" "${ssh_cmd[@]:1}")
+
+    if command -v timeout >/dev/null 2>&1; then
+        timeout "$SSH_TIMEOUT" "${ssh_cmd[@]}"
+    elif command -v gtimeout >/dev/null 2>&1; then
+        gtimeout "$SSH_TIMEOUT" "${ssh_cmd[@]}"
+    else
+        ssh "${ssh_cmd[@]:1}"
+    fi
     return $?
 }
 
@@ -43,54 +57,32 @@ ssh_exec_timeout() {
     local timeout="$1"
     local command="$2"
     validate_config
-    
-    if [[ "$DRY_RUN" == "true" ]]; then
-        log "INFO" "[DRY-RUN] Would execute: $command"
-        return 0
+
+    local -a ssh_cmd=(
+        ssh
+        -p "$PA_SSH_PORT"
+        -o "ConnectTimeout=$timeout"
+        -o "StrictHostKeyChecking=no"
+        -o "ServerAliveInterval=15"
+        -o "ServerAliveCountMax=2"
+        "$PA_USER@$FIREWALL_IP"
+        "$command"
+    )
+    [[ -n "$PA_KEY" ]] && ssh_cmd=(ssh -i "$PA_KEY" "${ssh_cmd[@]:1}")
+
+    if command -v timeout >/dev/null 2>&1; then
+        timeout "$timeout" "${ssh_cmd[@]}"
+    elif command -v gtimeout >/dev/null 2>&1; then
+        gtimeout "$timeout" "${ssh_cmd[@]}"
+    else
+        ssh "${ssh_cmd[@]:1}"
     fi
-    
-    local ssh_cmd="ssh"
-    [[ -n "$PA_KEY" ]] && ssh_cmd="$ssh_cmd -i $PA_KEY"
-    ssh_cmd="$ssh_cmd -p $PA_SSH_PORT -o ConnectTimeout=$timeout $PA_USER@$FIREWALL_IP"
-    
-    timeout "$timeout" eval "$ssh_cmd '$command'"
     return $?
 }
 
 ssh_op_exec() {
     local command="$1"
     ssh_exec "request system info | get" "$command"
-}
-
-backup_config() {
-    # shellcheck disable=SC2155
-    local backup_file="$BACKUP_DIR/pa-config-$(date +%Y%m%d_%H%M%S).xml"
-    
-    log "INFO" "Backing up configuration to $backup_file"
-    
-    ssh_exec 'request system info | get' > "$backup_file" 2>&1
-    
-    if [[ $? -eq 0 ]]; then
-        log "INFO" "Backup completed successfully"
-        echo "$backup_file"
-        return 0
-    else
-        error_exit "Failed to backup configuration"
-    fi
-}
-
-list_backups() {
-    log "INFO" "Available backups:"
-    ls -lh "$BACKUP_DIR"/*.xml 2>/dev/null | awk '{print $9}' | nl
-}
-
-get_config() {
-    local section="${1:-}"
-    if [[ -z "$section" ]]; then
-        ssh_exec "show running config"
-    else
-        ssh_exec "show running config $section"
-    fi
 }
 
 check_connectivity() {
